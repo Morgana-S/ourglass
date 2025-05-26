@@ -1,1 +1,1 @@
-web: gunicorn ourglass.wsgi:application
+web gunicorn ourglass.wsgi:application
