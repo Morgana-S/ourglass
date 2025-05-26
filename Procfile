@@ -1,1 +1,1 @@
-web: gunicorn ourglss.wsgi
+web: gunicorn ourglass.wsgi
