@@ -1,1 +1,1 @@
-web: gunicorn ourglass.wsgi
+web: gunicorn ourglass.wsgi:events
