@@ -1,0 +1,21 @@
+/* General Rules */
+body {
+	padding-bottom: 70px;
+}
+
+/* Bootstrap NavBar Custom CSS */
+.navbar-brand img {
+	max-height: 2rem;
+}
+
+/* Bootstrap Cards Custom CSS */
+.card-img-top {
+	width: 100%;
+	height: 15vw;
+	object-fit: cover;
+}
+
+.card-link{
+	border-radius: 5%;
+}
+
