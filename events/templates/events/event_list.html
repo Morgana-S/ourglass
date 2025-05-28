@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block eventlist %}
+<!-- Start of Index.html Content -->
+
+<!-- Event List -->
+<section>
+    <div class="container">
+        <div class="row mx-auto">
+            <div class="col">
+                <h1 class="text-center">Latest Events for {{user.username}}</h1>
+            </div>
+        </div>
+        <div class="row mx-auto">
+            <div class="card-group">
+                {% for event in object_list %}
+                <div class="card w-50">
+                    <img src=" {{ event.image.url }}" alt=" {{ event.event_name }}" class="card-img-top">
+                    <div class="card-body">
+                        <div class="card-header bg-success">
+                            <h5 class="card-title text-light">{{event.event_name}} - {{event.event_date}}</h5>
+                        </div>
+                        {% if event.is_online %}
+                        <p class="card-subtitle mb-2 text-muted">Online Event - Join Here: {{event.url_or_address}}</p>
+                        {% else %}
+                        <p class="card-subtitle mb-2 text-muted">In-Person Event - Address: {{event.url_or_address}}</p>
+                        {% endif %}
+                        <p class="card-subtitle mb-2 text-muted">{{event.current_attendees}} / {{event.maximum_attendees}} Places</p>
+                        <p class="card-text">{{event.short_description}}</p>
+                        <p class="card-subtitle mb-2 text-muted">Organiser: {{event.event_organiser}}</p>
+                        <a href="#" class="card-link bg-success text-white text-decoration-none p-2" aria-label="Click here to view this event.">View Event</a>
+                        {% if user.username == event.organiser %}
+                        <a href="#" class="card-link bg-warning text-dark text-decoration-none p-2" aria-label="Click here to edit this event.">Edit Event</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- End of index.html Content -->
+{% endblock %}
