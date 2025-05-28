@@ -10,6 +10,11 @@ Ourglass is a web application created to make the process of creating and attend
 
 ## Credits
 
+## Tools
+- [RealFaviconGenerator](https://realfavicongenerator.net/) - Resizing images for use in the Favicon for the site.
+
+## Frameworks
+
 ## Visual Assets
-- [Unsplash](https://unsplash.com/) - Royalty Free stock photographs used in Wireframes for Personas
+- [Unsplash](https://unsplash.com/) - Royalty Free stock photographs used in Wireframes for Personas and in Event Images
 - [SVG Repo](https://www.svgrepo.com/svg/527141/hourglass) - Royalty Free SVG that serves as the basis of the favicon
