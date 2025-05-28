@@ -18,7 +18,7 @@ class Event (models.Model):
     updated_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'Event Name: {self.event_name} | Event Date: {self.event_date}'
+        return f'{self.event_name} | Date: {self.event_date}'
 
     @property
     def current_attendees(self):
