@@ -13,7 +13,7 @@ class Event (models.Model):
     short_description = models.TextField(max_length=200)
     image = CloudinaryField('image')
     long_description = models.TextField(max_length=3000)
-    event_organiser = models.ForeignKey(User, on_delete=models.CASCADE)
+    event_organiser = models.ForeignKey(User, on_delete=models.CASCADE, related_name='organiser')
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 
