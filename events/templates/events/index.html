@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if not user.is_authenticated %}
+<section id="hero-section" class="d-flex h-100"></section>
+<div class="container-fluid bg-success" id="welcome-cover">
+    <div class="px-4 py-2 my-2 text-center">
+        <h1 class="display-5 pt-5 fw-bold text-light">Find your next passion.</h1>
+    </div>
+    <div class="col-lg-6 mx-auto text-center">
+        <p class="lead mt-5 pb-5 text-light">
+            Ourglass is a one-stop shop for courses, classes, and events. Whether you're looking to learn a new skill, offer taster classes for your course, or give something back to your community, do it with us.
+        </p>
+        <button class="btn btn-warning btn-lg px-4 gap-5 my-4 ">Sign Up</button>
+        <button class="btn btn-outline-light btn-lg px-4 gap-5 my-4 ">Log In</button>
+    </div>
+</div>
+</section>
+<section id="about_us">
+    <div class="container mt-3">
+        <div class="row">
+            <h2 class="mt-2">What is Ourglass?</h2>
+            <p>Ourglass is an events website that's centered around you. Whether it's a reading group, cooking class, or just a chance to get together and chat, we're the place to do it.</p>
+        </div>
+        <div class="row">
+            <div class="card card-cover p-5 mx-auto mb-3 col-sm-12 col-md-4" id="world_card">
+                <div class="bg-dark bg-opacity-75 rounded">
+                    <h3 class="card-title text-light">The World at your Fingertips.</h3>
+                    <p class="card-subtitle text-light">Whether it's attending an event or making one, the process has never been easier.</p>
+                </div>
+            </div>
+            <div class="card card-cover mx-auto p-5 mb-3 col-sm-12 col-md-4" id="friend_card">
+                <div class="bg-dark bg-opacity-75 rounded">
+                    <h3 class="card-title text-light">Connect. Or Reconnect.</h3>
+                    <p class="card-subtitle text-light">Attend events by yourself, or reserve places for yourself and up to three friends.</p>
+                </div>
+            </div>
+            <div class="card card-cover mx-auto p-5 mb-3 col-sm-12 col-md-4" id="course_card">
+                <div class="bg-dark bg-opacity-75 rounded">
+                    <h3 class="card-title text-light">Kickstart your class.</h3>
+                    <p class="card-subtitle text-light mt-2">Ourglass is the perfect place to offer taster sessions for your private courses.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% else %}
+<section id="event-search">
+    <div class="container-fluid bg-success mb-5">
+        <div class="px-4 py-2 my-2 text-center">
+            <h1 class="display-5 pt-5 fw-bold text-light">Search for events</h1>
+        </div>
+        <div class="col-lg-6 mx-auto pb-5">
+            <input class="form-control form-control-lg" type="text" placeholder="Search for Events">
+        </div>
+    </div>
+</section>
+<section id="latest-events">
+    {% include "events/latest_event_list.html" %}
+</section>
+{% endif %}
+{% endblock %}
