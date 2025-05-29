@@ -2,5 +2,5 @@ from . import views
 from django.urls import path
 
 urlpatterns = [
-    path('', views.EventList.as_view(), name='events')
+    path('', views.LatestEventList.as_view(), name='index'),
 ]
