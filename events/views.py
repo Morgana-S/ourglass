@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render,get_object_or_404
 from django.utils.timezone import now
 from django.views import generic
 from .models import Event, Booking
@@ -22,6 +22,22 @@ class MyEventsDashboardView(LoginRequiredMixin, generic.TemplateView):
     events the user has organised in one view.
     Also returns bookings that were previously attended to incentivize the
     user to leave a review.
+
+    **Context**
+    ``bookings``
+        All booking objects that belong to the user logged in
+        while on the page, excluding past events.
+
+    ``organised_events``
+        All event objects that were created by the logged in user.
+
+    ``previous_bookings``
+        All booking objects that belong to the user logged in
+        while on the page, but only past events.
+
+    **Template:**
+    :template:`events/my-events.html`
+
     """
 
     template_name = 'events/my-events.html'
@@ -45,6 +61,20 @@ class MyEventsDashboardView(LoginRequiredMixin, generic.TemplateView):
             )
 
         return context
+
+
+def event_detail_view(request, event_id):
+    """
+    Returns a render for an individual event.
+    """
+    queryset = Event.objects.all()
+    event = get_object_or_404(queryset, id=event_id)
+
+    return render(
+        request,
+        'events/event-detail.html',
+        {'event': event},
+    )
 
 
 def logout_view(request):
