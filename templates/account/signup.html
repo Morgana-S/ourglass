@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load allauth i18n %}
+{% block head_title %}
+{% trans "Signup" %}
+{% endblock head_title %}
+{% block content %}
+<div class="container mt-3">
+    <div class="text-center" id="sign-in-header">
+        <h2>{% trans "Sign Up" %}</h2>
+    </div>
+    <div class="text-center" id="sign-in-body">
+        <p>
+            {% blocktranslate %}Already have an account? Then please <a href="{{ login_url }}" alt="Click here to sign in">sign in</a>.{% endblocktranslate %}
+        </p>
+        {% url 'account_signup' as action_url %}
+        {% element form form=form method="post" action=action_url tags="entrance,signup" %}
+        {% slot body %}
+        {% csrf_token %}
+        {% element fields form=form unlabeled=True %}
+        {% endelement %}
+        {{ redirect_field }}
+        {% endslot %}
+        {% slot actions %}
+        {% element button tags="prominent,signup" type="submit" %}
+        {% trans "Sign Up" %}
+        {% endelement %}
+        {% endslot %}
+        {% endelement %}
+    </div>
+</div>
+
+
+
+
+{% endblock content %}

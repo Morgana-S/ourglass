@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load allauth account %}
+{% load widget_tweaks %}
+{% block head_title %}
+{% trans "Sign In" %}
+{% endblock head_title %}
+{% block content %}
+<div class="container mt-3 text-center">
+    <div id="log-in-header">
+        <h2>
+            {% trans "Log In" %}
+        </h2>
+    </div>
+    <div id="log-in-body">
+        {% if not SOCIALACCOUNT_ONLY %}
+        {% setvar link %}
+        <a href="{{ signup_url }}">
+            {% endsetvar %}
+            {% setvar end_link %}
+        </a>
+        {% endsetvar %}
+        <p>
+            {% blocktranslate %}If you have not created an account yet, then please {{ link }}sign up{{ end_link }} first.{% endblocktranslate %}
+        </p>
+        <!-- {% element form form=form method="post" action=login_url tags="entrance,login" %}
+        {% slot body %}
+        {% csrf_token %}
+        {% element fields form=form unlabeled=True %}
+        {% endelement %}
+        {{ redirect_field }}
+        {% endslot %}
+        {% slot actions %}
+        {% element button type="submit" tags="prominent,login" %}
+        {% trans "Sign In" %}
+        {% endelement %}
+        {% endslot %}
+        {% endelement %}
+        {% endif %} -->
+        <form method="post" action="{% url 'account_login' %}" class="mx-auto w-50" id="log-in-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+            <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                {% if field.field.widget.input_type == 'checkbox' %}
+                {{ field|add_class:"form-check-input" }}
+                {% else %}
+                {{ field|add_class:"form-control" }}
+                {% endif %}
+                {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {{ field.errors }}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-success w-25">{% trans "Log In" %}</button>
+        </form>
+    </div>
+</div>
+{% endblock content %}

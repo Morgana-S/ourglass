@@ -33,7 +33,7 @@
             <!-- Navigation -->
             <nav class="navbar navbar-expand-lg navbar-light">
                 <div class="container col-lg-6">
-                    <a href="#" class="navbar-brand">
+                    <a href="{% url 'index' %}" class="navbar-brand" aria-label="Click to go to the homepage">
                         <img src="{% static 'images/ourglass_logo.png'%}" alt="Ourglass Logo">Ourglass</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
@@ -55,10 +55,10 @@
                             </li>
                             {% else %}
                             <li class="nav-item">
-                                <a href="#" class="nav-link" aria-label="Click to go to the account registration page">Register</a>
+                                <a href="{% url 'account_signup' %}" class="nav-link" aria-label="Click to go to the account registration page">Register</a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link" aria-label="Click to go to the Log In Page">Log In</a>
+                                <a href="{% url 'account_login' %}" class="nav-link" aria-label="Click to go to the Log In Page">Log In</a>
                             </li>
                             {% endif %}
                             <li class="nav-item">
@@ -74,7 +74,7 @@
                             here.</a>
                     </span>
                     {% else %}
-                    <span>You are not logged in. To log in, click <a href="#" class="link-success">here.</a></span>
+                    <span>You are not logged in. To log in, click <a href="{% url 'account_login' %}" class="link-success" aria-label="Click here to sign out of your account.">here.</a></span>
                     {% endif %}
                 </div>
             </nav>
