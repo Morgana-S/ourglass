@@ -6,6 +6,17 @@ from .forms import MessageForm
 
 
 def message_view(request):
+    """
+    Returns a render with the MessageForm form to obtain information from the
+    user about their message. 
+
+    **Context**
+    ``form``
+        The message form itself.
+
+    **Template**
+    :template:`contact/contact.html
+    """
     success_message = (
         "Thank you, your message has been received and we will be in contact."
     )
