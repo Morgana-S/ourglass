@@ -44,4 +44,8 @@ class Booking(models.Model):
     tickets = models.PositiveSmallIntegerField(choices=NO_OF_TICKETS)
 
     def __str__(self):
-        return f'A booking for {self.event} | Ticketholder: {self.ticketholder} | No. of Tickets: {self.tickets}'
+        booking_detail = (
+            f'A booking for {self.event} | Ticketholder: {self.ticketholder} '
+            f'| No. of Tickets: {self.tickets}'
+        )
+        return booking_detail
