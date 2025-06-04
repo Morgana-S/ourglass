@@ -11,8 +11,8 @@
         <p class="lead mt-5 pb-5 text-light">
             Ourglass is a one-stop shop for courses, classes, and events. Whether you're looking to learn a new skill, offer taster classes for your course, or give something back to your community, do it with us.
         </p>
-        <button class="btn btn-warning btn-lg px-4 gap-5 my-4 ">Sign Up</button>
-        <button class="btn btn-outline-light btn-lg px-4 gap-5 my-4 ">Log In</button>
+        <a href="{% url 'account_signup' %}" role="button" class="btn btn-warning btn-lg px-4 gap-5 my-4 ">Sign Up</a>
+        <a href="{% url 'account_login' %}" role="button" class="btn btn-outline-light btn-lg px-4 gap-5 my-4 ">Log In</a>
     </div>
 </div>
 </section>
@@ -59,4 +59,4 @@
     {% include "events/latest-event-list.html" %}
 </section>
 {% endif %}
-{% endblock %}
+{% endblock content %}
