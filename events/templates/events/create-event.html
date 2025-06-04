@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+<!-- Create Event Section -->
+<section id="create-event">
+    <div class="container">
+        <div class="col-md-6 mb-3 mt-2 mx-auto text-center">
+            <div id="create-event-header">
+                <h2>Create New Event</h2>
+            </div>
+            <div id="create-event-body">
+                <p>
+                    Thank you for choosing to create an event using Ourglass! Please enter the event information below.
+                </p>
+                <p class="text-danger">Please note that all fields below are required.</p>
+            </div>
+            <form method="post" action="{% url 'create-event' %}" enctype="multipart/form-data" id="event-form">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{field.label}}</label>
+                    {% if field.field.widget.input_type == 'checkbox' %}
+                    {{ field|add_class:"form-check-input" }}
+                    {% else %}
+                    {{ field|add_class:"form-control" }}
+                    {% endif %}
+                    {% if field.help_text %}
+                    <div class="form-text">{{ field.help_text }}</div>
+                    {% endif %}
+                    {{ field.errors }}
+                </div>
+                {% endfor %}
+                <button id="submit-button" type="submit" class="btn btn-success btn-lg">
+                    Create Event
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock content %}
