@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block content %}
 <!-- My Bookings Section -->
 <section id="my-bookings">
@@ -18,12 +17,9 @@
                     <p>Number of Tickets: {{booking.tickets}}</p>
                     <p>{{ booking.event.short_description }}</p>
                     <p>
-                        <a href="#" class="btn btn-lg btn-success mx-2" aria-label="Click here to view the event page for {{ booking.event.event_name }}">
+                        <a href="{% url 'event-detail' booking.event.id %}" aria-label="Click here to go to the View Event page for {{ booking.event.event_name }}" class="btn btn-lg btn-success mx-2" aria-label="Click here to view the event page for {{ booking.event.event_name }}">
                             View Event
                         </a>
-                        {% if user == event.event_organiser %}
-                        <a href="#" class="btn btn-lg btn-warning mx-2" aria-label="Click here to go to the Edit Event page for {{ booking.event.event_name }}">Edit Event</a>
-                        {% endif %}
                     </p>
                 </div>
                 <div class="card-footer">
@@ -44,6 +40,7 @@
             <hr>
         </div>
         <div class="row mb-3 card-group" id="events-body">
+            {% if not organised_events|length == 0%}
             {% for event in organised_events %}
             <div class="card col-sm-1 col-md-3 col-lg-4 rounded mx-auto">
                 <img src="{{ event.image.url}}" alt="{{ event.event_name }}">
@@ -52,7 +49,7 @@
                     <p class="card-subtitle text-muted">{{ event.event_date}}</p>
                     <p>{{ event.short_description }}</p>
                     <p>
-                        <a href="#" class="btn btn-lg btn-success mx-2" aria-label="Click here to view the event page for {{ event.event_name }}">
+                        <a href="{% url 'event-detail' event.id %}" aria-label="Click here to go to the View Event page for {{ event.event_name }}" class="btn btn-lg btn-success mx-2" aria-label="Click here to view the event page for {{ event.event_name }}">
                             View Event
                         </a>
                         {% if user == event.event_organiser %}
@@ -67,6 +64,9 @@
                 </div>
             </div>
             {% endfor %}
+            {% else %}
+            <p>You don't seem to have any upcoming organised events.</p>
+            {% endif %}
         </div>
     </div>
 </section>
@@ -85,9 +85,9 @@
                 <div class="ms-3">
                     <h1>{{previous_booking.event.event_name}}</h1>
                     <p class="card-subtitle text-muted">{{ previous_booking.event.event_date}}</p>
-                    <p>{{ event.short_description }}</p>
+                    <p>{{ previous_booking.event.short_description }}</p>
                     <p>
-                        <a href="#" class="btn btn-lg btn-success mx-2" aria-label="Click here to go to the event page for {{ previous_booking.event.event_name }}">
+                        <a href="{% url 'event-detail' previous_booking.event.id %}" class="btn btn-lg btn-success mx-2" aria-label="Click here to go to the View Event page for {{ previous_booking.event.event_name }}">
                             View Event
                         </a>
                     </p>
