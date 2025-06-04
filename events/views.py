@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect, render,get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import now
 from django.views import generic
 from .models import Event, Booking
@@ -52,6 +52,8 @@ class MyEventsDashboardView(LoginRequiredMixin, generic.TemplateView):
             )
         context['organised_events'] = Event.objects.filter(
             event_organiser=user
+            ).exclude(
+                event_date__lt=now()
             )
         context['previous_bookings'] = Booking.objects.filter(
             ticketholder=user,
