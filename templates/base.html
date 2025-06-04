@@ -70,8 +70,7 @@
                 <div class="container d-none d-lg-flex col-lg-6 align-items-center justify-content-end ">
                     {% if user.is_authenticated %}
                     <span>
-                        Welcome back, {{ user.username }}! To log out, click <a href="{% url 'logout' %}" class="link-success" aria-label="Click here to sign out of your account.">
-                            here.</a>
+                        Welcome back, {{ user.username }}!
                     </span>
                     {% else %}
                     <span>You are not logged in. To log in, click <a href="{% url 'account_login' %}" class="link-success" aria-label="Click here to sign out of your account.">here.</a></span>
