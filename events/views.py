@@ -5,6 +5,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import now
 from django.views import generic
 from .models import Event, Booking
+from .forms import EventForm
 # Create your views here.
 
 
@@ -47,20 +48,20 @@ class MyEventsDashboardView(LoginRequiredMixin, generic.TemplateView):
         user = self.request.user
         context['bookings'] = Booking.objects.filter(
             ticketholder=user
-            ).exclude(
+        ).exclude(
             event__event_date__lt=now()
-            )
+        )
         context['organised_events'] = Event.objects.filter(
             event_organiser=user
-            ).exclude(
-                event_date__lt=now()
-            )
+        ).exclude(
+            event_date__lt=now()
+        )
         context['previous_bookings'] = Booking.objects.filter(
             ticketholder=user,
             event__event_date__lt=now(),
-            ).exclude(
-                event__event_organiser=user
-            )
+        ).exclude(
+            event__event_organiser=user
+        )
 
         return context
 
@@ -83,3 +84,25 @@ def logout_view(request):
     logout(request)
     messages.success(request, "You have been logged out.")
     return redirect('index')
+
+
+def create_event_view(request):
+    success_message = (
+        "Congratulations, your event has now been created "
+        + " and will now show up in your My Events Page."
+    )
+    if request.method == "POST":
+        event_form = EventForm(request.POST, request.FILES)
+        if event_form.is_valid():
+            event = event_form.save(commit=False)
+            event.event_organiser = request.user
+            event.save()
+            messages.success(
+                request,
+                success_message
+            )
+            return redirect('my-events')
+    else:
+        event_form = EventForm()
+
+    return render(request, 'events/create-event.html', {'form': event_form})
