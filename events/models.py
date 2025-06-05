@@ -49,3 +49,30 @@ class Booking(models.Model):
             f'| No. of Tickets: {self.tickets}'
         )
         return booking_detail
+
+
+class Review(models.Model):
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+        )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
+    RATING_CHOICES = [
+        (1, '1 Star'),
+        (2, '2 Stars'),
+        (3, '3 Stars'),
+        (4, '4 Stars'),
+        (5, '5 Stars')
+    ]
+    rating = models.PositiveSmallIntegerField(
+        choices=RATING_CHOICES
+        )
+    content = models.TextField(
+        max_length=300
+    )
+    approved = models.BooleanField()
