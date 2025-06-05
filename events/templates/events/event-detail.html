@@ -15,6 +15,9 @@
                 {% else %}
                 <p class="text-subtitle text-muted fst-italic">Event Address: {{ event.url_or_address }}</p>
                 {% endif %}
+                {% if request.user == event.event_organiser %}
+                <a class="btn btn-warning" href="{% url 'edit-event' event.id %}" aria-label="Click here to go to the Edit Event page for {{ event.event_name }}">Edit Event</a>
+                {% endif %}
             </div>
             <div class=" mt-3 col-6 text-end">
                 <h2>{{event.current_attendees}}/{{event.maximum_attendees}}</h2>
