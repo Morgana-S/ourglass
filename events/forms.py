@@ -2,8 +2,7 @@ from django import forms
 from django.utils import timezone
 from django_summernote.widgets import SummernoteWidget
 from datetime import timedelta
-from .models import Event
-
+from .models import Event, Review
 
 
 class EventForm(forms.ModelForm):
@@ -54,3 +53,20 @@ class EventForm(forms.ModelForm):
         elif maximum_attendees < 1:
             raise forms.ValidationError("Event must have at least 1 attendee.")
         return maximum_attendees
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = [
+            'rating',
+            'content',
+        ]
+
+    def clean_content(self):
+        content = self.cleaned_data.get('content')
+        too_short_error = (
+            'Your review is too short. Please write a little more!'
+        )
+        if len(content) < 50:
+            raise forms.ValidationError(too_short_error)
+        return content
