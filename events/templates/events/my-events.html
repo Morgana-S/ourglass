@@ -10,7 +10,7 @@
         <div class="row mb-3 card-group" id="bookings-body">
             {% for booking in bookings %}
             <div class="card col-sm-1 col-md-3 col-lg-4 mx-auto rounded">
-                <img src="{{ booking.event.image.url}}" alt="{{ booking.event.event_name }}">
+                <img class="card-img-top img-fluid" src="{{ booking.event.image.url}}" alt="{{ booking.event.event_name }}">
                 <div class="ms-3">
                     <h1>{{booking.event.event_name}}</h1>
                     <p class="card-subtitle text-muted">{{ booking.event.event_date}}</p>
