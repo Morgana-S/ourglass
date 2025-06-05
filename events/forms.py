@@ -54,6 +54,7 @@ class EventForm(forms.ModelForm):
             raise forms.ValidationError("Event must have at least 1 attendee.")
         return maximum_attendees
 
+
 class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
