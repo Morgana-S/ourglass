@@ -13,6 +13,10 @@ urlpatterns = [
         views.edit_event_view,
         name='edit-event'
     ),
+    path('events/review-event/<int:event_id>/',
+         views.review_event_view,
+         name='review-event'
+         ),
     path('logout/', views.logout_view, name='logout'),
     path('myevents/', views.MyEventsDashboardView.as_view(), name='my-events'),
     path('', views.LatestEventList.as_view(), name='index'),
