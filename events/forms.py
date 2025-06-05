@@ -1,5 +1,6 @@
 from django import forms
 from django.utils import timezone
+from django_summernote.widgets import SummernoteWidget
 from datetime import timedelta
 from .models import Event
 
@@ -25,6 +26,7 @@ class EventForm(forms.ModelForm):
                     'class': 'form-control'
                 }
             ),
+            'long_description': SummernoteWidget()
         }
 
     def clean_event_date(self):
