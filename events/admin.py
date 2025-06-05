@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Event, Booking
+from .models import Event, Booking, Review
 from django_summernote.admin import SummernoteModelAdmin
 
 # Register your models here.
@@ -18,3 +18,10 @@ class BookingAdmin(SummernoteModelAdmin):
 
     list_display = ('id', 'event', 'tickets', 'ticketholder',)
     search_fields = ['event', 'ticketholder']
+
+
+@admin.register(Review)
+class ReviewAdmin(SummernoteModelAdmin):
+
+    list_display = ('id', 'event', 'author', 'rating',)
+    search_fields = ['event', 'author']
