@@ -53,7 +53,7 @@
                             View Event
                         </a>
                         {% if user == event.event_organiser %}
-                        <a href="#" class="btn btn-lg btn-warning mx-2" aria-label="Click here to go to the Edit Event page for {{ event.event_name }}">Edit Event</a>
+                        <a href="{% url 'edit-event' event.id %}" class="btn btn-lg btn-warning mx-2" aria-label="Click here to go to the Edit Event page for {{ event.event_name }}">Edit Event</a>
                         {% endif %}
                     </p>
                 </div>
