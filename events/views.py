@@ -2,7 +2,9 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
-from django.db.models import OuterRef, Exists
+from django.db.models import (
+    OuterRef, Exists, Q, Case, When, BooleanField, Value
+)
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import now
 from django.views import generic
@@ -91,7 +93,7 @@ def event_detail_view(request, event_id):
     if request.user.is_authenticated:
         user_has_reviewed = event.reviews.filter(
             author=request.user
-            ).exists
+        ).exists
     has_event_passed = event.event_date < now()
     context = {
         'event': event,
@@ -166,7 +168,7 @@ def review_event_view(request, event_id):
         'Sorry, you cannot leave a review for this event.  '
         'This may be because you have already left a review, or '
         'you did not attend this event.'
-        )
+    )
     error_message = ("Sorry, your review wasn't able to be submitted")
     event = get_object_or_404(Event, id=event_id)
     user_has_booking = False
@@ -201,3 +203,34 @@ def review_event_view(request, event_id):
         'form': review_form
     }
     return render(request, 'events/review-event.html', context)
+
+
+def search_events_view(request):
+    query = request.GET.get('q', '')
+    include_past = request.GET.get('past-events') == 'on'
+
+    events = Event.objects.filter(
+        Q(event_name__icontains=query)
+    ).order_by('-event_date')
+
+    if not include_past:
+        events = events.filter(event_date__gte=now())
+
+    events = events.annotate(
+        is_past=Case(
+            When(event_date__lt=now(), then=Value(True)),
+            default=Value(False),
+            output_field=BooleanField(),
+        )
+    )
+
+    paginator = Paginator(events, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'query': query,
+        'results': page_obj,
+        'include_past': include_past
+    }
+    return render(request, 'events/search-events.html', context)
