@@ -19,5 +19,6 @@ urlpatterns = [
          ),
     path('logout/', views.logout_view, name='logout'),
     path('myevents/', views.MyEventsDashboardView.as_view(), name='my-events'),
+    path('search-events/', views.search_events_view, name='search-events'),
     path('', views.LatestEventList.as_view(), name='index'),
 ]
