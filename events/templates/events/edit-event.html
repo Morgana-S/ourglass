@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+<!-- Edit Event Section -->
+<section id="edit-event">
+    <div class="container">
+        <div class="col-md-6 mb-3 mt-2 mx-auto text-center">
+            <div id="edit-event-header">
+                <h2>Edit Event</h2>
+            </div>
+            {% if request.user == event.event_organiser %}
+            <div id="edit-event-body">
+                <p>
+                    Thank you for choosing to create an event using Ourglass! Please enter the event information below.
+                </p>
+                <p class="text-danger">Please note that all fields below are required.</p>
+            </div>
+            <form method="post" action="{% url 'edit-event' event.id %}" enctype="multipart/form-data" id="event-form">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{field.label}}</label>
+                    {% if field.field.widget.input_type == 'checkbox' %}
+                    {{ field|add_class:"form-check-input" }}
+                    {% else %}
+                    {{ field|add_class:"form-control" }}
+                    {% endif %}
+                    {% if field.help_text %}
+                    <div class="form-text">{{ field.help_text }}</div>
+                    {% endif %}
+                    {{ field.errors }}
+                </div>
+                {% endfor %}
+                <button id="submit-button" type="submit" class="btn btn-success btn-lg">
+                    Edit Event
+                </button>
+            </form>
+            {% else %}
+            <p>You are not able to edit this event as you are not the event organiser.</p>
+            <a class="btn btn-success" href="{% url 'event-detail' event.id %}" aria-label="Click here to return to the event detail page for {{ event.event_name }}">Return to event detail page</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock content %}
