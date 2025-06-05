@@ -26,7 +26,7 @@
                         <p>
                             <a href="{% url 'event-detail' first_event.id %}" aria-label="Click here to go to the page for {{ first_event.event_name }}" class="btn btn-lg btn-success mx-2">View Event</a>
                             {% if user == first_event.event_organiser %}
-                            <a href="#" class="btn btn-lg btn-warning mx-2">Edit Event</a>
+                            <a href="{% url 'edit-event' first_event.id %}" class="btn btn-lg btn-warning mx-2" aria-label="Click here to go to the Edit Event Page for {{ first_event.event_name }}">Edit Event</a>
                             {% endif %}
                         </p>
                     </div>
@@ -43,7 +43,7 @@
                         <p>
                             <a href="{% url 'event-detail' event.id %}" aria-label="Click here to go to the page for {{ event.event_name }}" class="btn btn-lg btn-success mx-2">View Event</a>
                             {% if user == event.event_organiser %}
-                            <a href="#" class="btn btn-lg btn-warning mx-2">Edit Event</a>
+                            <a href="{% url 'edit-event' event.id %}" class="btn btn-lg btn-warning mx-2" aria-label="Click here to go to the Edit Event page for {{ event.event_name }}">Edit Event</a>
                             {% endif %}
                         </p>
                     </div>
