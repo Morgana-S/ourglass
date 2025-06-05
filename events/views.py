@@ -82,16 +82,16 @@ def event_detail_view(request, event_id):
 
 def logout_view(request):
     logout(request)
-    messages.success(request, "You have been logged out.")
+    messages.success(request, 'You have been logged out.')
     return redirect('index')
 
 
 def create_event_view(request):
     success_message = (
-        "Congratulations, your event has now been created "
-        + " and will now show up in your My Events Page."
+        'Congratulations, your event has now been created '
+        + 'and will now show up in your My Events Page.'
     )
-    if request.method == "POST":
+    if request.method == 'POST':
         event_form = EventForm(request.POST, request.FILES)
         if event_form.is_valid():
             event = event_form.save(commit=False)
@@ -106,3 +106,25 @@ def create_event_view(request):
         event_form = EventForm()
 
     return render(request, 'events/create-event.html', {'form': event_form})
+
+
+def edit_event_view(request, event_id):
+    success_message = 'Your event has now been updated.'
+    error_message = 'Your event was not updated successfully.'
+    event = get_object_or_404(Event, id=event_id)
+    if request.method == 'POST':
+        event_form = EventForm(data=request.POST, instance=event)
+        if event_form.is_valid() and event.event_organiser == request.user:
+            event = event_form.save()
+            messages.success(request, success_message)
+            return redirect('event-detail', event_id=event.id)
+        else:
+            messages.error(request, error_message)
+    else:
+        event_form = EventForm(instance=event)
+
+    context = {
+        'form': event_form,
+        'event': event,
+    }
+    return render(request, 'events/edit-event.html', context)
