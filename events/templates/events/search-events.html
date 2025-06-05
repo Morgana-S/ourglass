@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block content %}
+<section id="search-results">
+    <div class="container">
+        <div class="row mx-auto mb-3">
+            <div class="col text-center">
+                <h2>Search Results for "{{ query }}"</h2>
+                {% if include_past %}
+                <p>Results also include past events.</p>
+                {% endif %}
+            </div>
+        </div>
+        {% if results %}
+        <div class="row justify-content-center">
+            {% for event in results %}
+            <div class="col col-sm-12 col-md-6 col-lg-4 mb-4 d-flex">
+                <div class="card rounded flex-fill">
+                    <div class="card-body">
+                        <img class="card-img-top img-fluid" src="{{ event.image.url }}" alt="{{ event.event_name }}">
+                        <h2 class="card-title">{{ event.event_name }}</h2>
+                        {% if event.is_past %}
+                        <p class="text-muted card-subtitle">This is a past event.</p>
+                        {% else %}
+                        <p class="text-muted card-subtitle">{{ event.event_date }}</p>
+                        {% endif %}
+                        <p class="card-text">{{ event.short_description }}</p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="{% url 'event-detail' event.id %}" class="btn btn-success">View Event</a>
+                        {% if user == event.event_organiser and not event.is_past %}
+                        <a href="{% url 'edit-event' event.id %}" class="btn btn-warning" aria-label="Click here to go to the Edit Event page for {{ event.event_name }}">Edit Event</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <!-- Pagination Controls -->
+        <nav aria-label="Search Results Pagination" class="d-flex justify-content-center">
+            <ul class="pagination">
+                {% if results.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ query }}{% if include_past %}&past-events=on{% endif %}&page={{ results.previous_page_number }}" aria-label="Click here to navigate to the previous page of results">
+                        &laquo;
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo;</span>
+                </li>
+                {% endif %}
+                {% for num in results.paginator.page_range %}
+                {% if results.number == num %}
+                <li class="page-item active" aria-current="page"><span class="page-link">{{ num }}</span></li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ query }}{% if include_past %}&past-events=on{% endif %}&page={{ num }}">{{ num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+                {% if results.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ query }}{% if include_past %}&past-events=on{% endif %}&page={{ results.next_page_number }}" aria-label="Click here to navigate to the next page of results">&raquo;</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% else %}
+        <p>No events found matching your search.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock content %}
