@@ -12,7 +12,7 @@
             <div class="card col-sm-1 col-md-3 col-lg-4 mx-auto rounded">
                 <img class="card-img-top img-fluid" src="{{ booking.event.image.url}}" alt="{{ booking.event.event_name }}">
                 <div class="ms-3">
-                    <h1>{{booking.event.event_name}} - x{{ booking.tickets }} ticket{{ booking.tickets|pluralize }}</h1>
+                    <h2>{{booking.event.event_name}} - x{{ booking.tickets }} ticket{{ booking.tickets|pluralize }}</h2>
                     <p class="card-subtitle text-muted">{{ booking.event.event_date}} - {{ booking.event.url_or_address }}</p>
                     <p>{{ booking.event.short_description }}</p>
                     <p>
@@ -48,7 +48,7 @@
             <div class="card col-sm-1 col-md-3 col-lg-4 rounded mx-auto">
                 <img src="{{ event.image.url}}" alt="{{ event.event_name }}">
                 <div class="ms-3">
-                    <h1>{{event.event_name}}</h1>
+                    <h2>{{event.event_name}}</h2>
                     <p class="card-subtitle text-muted">{{ event.event_date}}</p>
                     <p>{{ event.short_description }}</p>
                     <p>
@@ -86,7 +86,7 @@
             <div class="card col-sm-1 col-md-3 col lg-4 rounded mx-auto">
                 <img src="{{ previous_booking.event.image.url}}" alt="{{ previous_booking.event.event_name }}">
                 <div class="ms-3">
-                    <h1>{{previous_booking.event.event_name}}</h1>
+                    <h2>{{previous_booking.event.event_name}}</h2>
                     <p class="card-subtitle text-muted">{{ previous_booking.event.event_date}}</p>
                     <p>{{ previous_booking.event.short_description }}</p>
                     <p>
