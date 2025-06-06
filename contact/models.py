@@ -13,8 +13,8 @@ class Message (models.Model):
     )
     guest_name = models.CharField(
         max_length=100,
-        blank=True,
     )
+    # Can be null as email_address property is derived from user.email or this
     guest_email = models.EmailField(
         null=True,
     )
