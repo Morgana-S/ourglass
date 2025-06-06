@@ -40,7 +40,7 @@ class MyEventsDashboardView(LoginRequiredMixin, generic.TemplateView):
         All booking objects that belong to the user logged in
         while on the page, but only past events.
 
-    **Template:**
+    **Template**
     :template:`events/my-events.html`
 
     """
@@ -76,7 +76,35 @@ class MyEventsDashboardView(LoginRequiredMixin, generic.TemplateView):
 
 def event_detail_view(request, event_id):
     """
-    Returns a render for an individual event.
+    Returns a render for an individual event, as well as providing information
+    about the event's bookings and reviews.
+
+    **Context**
+    ``event``
+        The event object for the page, determined by the id.
+
+    ``user_has_booking``
+        Checks whether the user has a booking for the event. Returns True
+        if the user has a booking, and False if they don't.
+
+    ``user_tickets``
+        If the user has a booking, determined by the user_has_booking property,
+        this allows access to the user's tickets value.
+
+    ``user_has_reviewed``
+        Checks if the user has left a review for this event.
+
+    ``reviews``
+        All reviews for the event, paginated using the Paginator.
+
+    ``past_event``
+        Checks if the event is in the past. Returns True if it is, False
+        if it isn't.
+
+    **Template**
+    :template:`events/event-detail.html`
+
+
     """
     queryset = Event.objects.all()
     event = get_object_or_404(queryset, id=event_id)
@@ -114,12 +142,26 @@ def event_detail_view(request, event_id):
 
 
 def logout_view(request):
+    """
+    Logs the user out of their account.
+    """
     logout(request)
     messages.success(request, 'You have been logged out.')
     return redirect('index')
 
 
 def create_event_view(request):
+    """
+    View for creating events. Passes the EventForm to the template and saves
+    the user's inputs to the database as a new event.
+
+    **Context**
+    ``form``
+        The form for the Event Model.
+
+    **Template**
+    :template:`events/create-event.html`
+    """
     success_message = (
         'Congratulations, your event has now been created '
         + 'and will now show up in your My Events Page.'
@@ -142,6 +184,20 @@ def create_event_view(request):
 
 
 def edit_event_view(request, event_id):
+    """
+    View for editing events. Passes the EventForm prepopulated with the Event
+    instance details, then saves changes to the event instance in the database.
+
+    **Context**
+    ``form``
+        The form for the event model.
+
+    ``event``
+        The event that is being edited.
+
+    **Template**
+    :template:`events/edit-event.html`
+    """
     success_message = 'Your event has now been updated.'
     error_message = 'Your event was not updated successfully.'
     event = get_object_or_404(Event, id=event_id)
@@ -164,6 +220,10 @@ def edit_event_view(request, event_id):
 
 
 def delete_event_view(request, event_id):
+    """
+    View for deleting events, accessed directly from the Edit Event template.
+    Validation exists to ensure that the request.user is the event organiser.
+    """
     event = get_object_or_404(Event, id=event_id)
     not_authorised_error = (
         'You do not have permission to delete this event.'
@@ -180,6 +240,21 @@ def delete_event_view(request, event_id):
 
 
 def review_event_view(request, event_id):
+    """
+    View for creating a review for an event. Passes the ReviewForm to the
+    template and saves the users inputs, after adding information about
+    the user and event, to the database as a new Review.
+
+    **Context**
+    ``event``
+        The Event that is being reviewed.
+
+    ``form``
+        The form for the review model.
+
+    **Template**
+    :template:`events/review-event.html`
+    """
     success_message = (
         'Thank you, your review has now been sent to our team '
         'for approval.'
@@ -226,6 +301,23 @@ def review_event_view(request, event_id):
 
 
 def edit_review_view(request, review_id):
+    """
+    View for editing a review. Passes the ReviewForm prepopulated with the
+    review instance details, then saves changes to the review in the database.
+
+    **Context**
+    ``form``
+        The form for the Review Model.
+
+    ``event``
+        The instance of the event being reviewed.
+
+    ``review``
+        The instance of the review being edited.
+
+    **Template**
+    :template:`events/edit-review.html`
+    """
     review = get_object_or_404(Review, id=review_id)
     event = get_object_or_404(Event, id=review.event.id)
     success_message = ('Your updated review is now awaiting approval.')
@@ -255,6 +347,10 @@ def edit_review_view(request, review_id):
 
 
 def delete_review_view(request, review_id):
+    """
+    View for deleting reviews. Accessed through the edit-review template.
+    Validation exists to ensure that only the reviewer can delete their review.
+    """
     review = get_object_or_404(Review, id=review_id)
 
     if review.author != request.user:
@@ -267,6 +363,24 @@ def delete_review_view(request, review_id):
 
 
 def search_events_view(request):
+    """
+    View for event search results. Obtains the query information from the
+    input on the search bar, as well as whether the user wants to see past
+    events. These are then paginated to 6 events per page.
+
+    **Context**
+    ``query``
+        The user's query from the search bar input.
+
+    ``results``
+        The paginated results from the search query.
+
+    ``include_past``
+        A property that returns true if past events are included.
+
+    **Template**
+    :template:`events/search-events.html`
+    """
     query = request.GET.get('q', '')
     include_past = request.GET.get('past-events') == 'on'
 
@@ -298,6 +412,20 @@ def search_events_view(request):
 
 
 def booking_tickets_view(request, event_id):
+    """
+    View for booking tickets for an event. Passes the BookingForm to the 
+    template and saves the user input to a new booking instance in the
+    database.
+
+    **Context**
+    ``event``
+        The event that the booking is for.
+
+    ``form``
+        The form for the Booking Model. Most information is passed to the
+        booking instance afterwards - users are only expected to select
+        their ticket amount.
+    """
     event = get_object_or_404(Event, id=event_id)
 
     if request.method == 'POST':
@@ -327,6 +455,24 @@ def booking_tickets_view(request, event_id):
 
 
 def edit_booking_view(request, event_id):
+    """
+    View for editing a booking. Passes the BookingForm preopulated with the
+    booking instance details, then saves changes to the booking in the
+    database.
+
+    **Context**
+    ``event``
+        The event the booking is for.
+
+    ``form``
+        The form for the Booking model.
+
+    ``booking``
+        The instance of the booking.
+
+    *Template**
+    :template:`events/edit-booking.html`
+    """
     success_message = 'Your booking has now been updated.'
     event = get_object_or_404(Event, id=event_id)
     booking = get_object_or_404(
@@ -361,6 +507,11 @@ def edit_booking_view(request, event_id):
 
 
 def delete_booking_view(request, booking_id):
+    """
+    View for deleting bookings. Accessed through the edit-booking template.
+    Validation exists to ensure that only the ticketholder can delete their
+    bookings.
+    """
     booking = get_object_or_404(Booking, id=booking_id)
 
     if booking.ticketholder != request.user:
