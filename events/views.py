@@ -179,10 +179,10 @@ def review_event_view(request, event_id):
     if request.user.is_authenticated:
         user_has_booking = event.bookings.filter(
             ticketholder=request.user
-        ).exists
+        ).exists()
         user_has_reviewed_event = event.reviews.filter(
             author=request.user
-        ).exists
+        ).exists()
         eligible_reviewer = user_has_booking and not user_has_reviewed_event
     if request.method == 'POST':
         review_form = ReviewForm(request.POST)
