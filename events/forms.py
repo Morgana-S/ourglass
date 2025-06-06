@@ -2,7 +2,7 @@ from django import forms
 from django.utils import timezone
 from django_summernote.widgets import SummernoteWidget
 from datetime import timedelta
-from .models import Event, Review
+from .models import Event, Review, Booking
 
 
 class EventForm(forms.ModelForm):
@@ -71,3 +71,73 @@ class ReviewForm(forms.ModelForm):
         if len(content) < 50:
             raise forms.ValidationError(too_short_error)
         return content
+
+
+class BookingForm(forms.ModelForm):
+    class Meta:
+        model = Booking
+        fields = ['tickets']
+
+    def __init__(self, *args, **kwargs):
+        self.event = kwargs.pop('event', None)
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        tickets = cleaned_data.get('tickets')
+        event_date = self.event.event_date
+        now = timezone.now()
+
+        # Skips if there is no info for tickets, user or event
+        # used for modifying existing data
+        if not tickets or not self.event or not self.user:
+            return cleaned_data
+
+        # Checks if the instance already exists, changing projected attendees
+        # on this basis
+        if self.instance.pk:
+            projected_attendees = (
+                self.event.current_attendees
+                - self.instance.tickets
+                + tickets
+            )
+        else:
+            projected_attendees = (
+                self.event.current_attendees + tickets
+            )
+
+        organiser_error = (
+            'You cannot book tickets for your own events.'
+        )
+        already_booked_error = (
+            'You already have tickets to this event.'
+        )
+        not_enough_spaces_error = (
+            "There are not enough spaces left on the event to book this many "
+            "tickets."
+        )
+        past_event_error = (
+            'You can not make or change bookings for events that are in the '
+            'past.'
+        )
+        # Checks if the organiser is trying to book their own event
+        if self.event.event_organiser == self.user:
+            raise forms.ValidationError(organiser_error)
+
+        # Checks if the user is already booked
+        if not self.instance.pk and Booking.objects.filter(
+            event=self.event,
+            ticketholder=self.user
+        ).exists():
+            raise forms.ValidationError(already_booked_error)
+
+        # Checks available event capacity
+        if projected_attendees > self.event.maximum_attendees:
+            raise forms.ValidationError(not_enough_spaces_error)
+        
+        # Checks Event is not in the past
+        if event_date < now:
+            raise forms.ValidationError(past_event_error)
+
+        return cleaned_data
