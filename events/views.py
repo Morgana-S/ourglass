@@ -163,6 +163,23 @@ def edit_event_view(request, event_id):
     return render(request, 'events/edit-event.html', context)
 
 
+def delete_event_view(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    not_authorised_error = (
+        'You do not have permission to delete this event.'
+    )
+    success_message = ('This event has now been deleted.')
+
+    if request.user != event.event_organiser:
+        messages.error(request, not_authorised_error)
+        return redirect('event-detail', event_id=event_id)
+
+    if request.method == 'POST':
+        event.delete()
+        messages.success(request, success_message)
+        return redirect('my-events')
+
+
 def review_event_view(request, event_id):
     success_message = (
         'Thank you, your review has now been sent to our team '
