@@ -12,14 +12,17 @@
             <div class="card col-sm-1 col-md-3 col-lg-4 mx-auto rounded">
                 <img class="card-img-top img-fluid" src="{{ booking.event.image.url}}" alt="{{ booking.event.event_name }}">
                 <div class="ms-3">
-                    <h1>{{booking.event.event_name}}</h1>
-                    <p class="card-subtitle text-muted">{{ booking.event.event_date}}</p>
-                    <p>Number of Tickets: {{booking.tickets}}</p>
+                    <h1>{{booking.event.event_name}} - x{{ booking.tickets }} ticket{{ booking.tickets|pluralize }}</h1>
+                    <p class="card-subtitle text-muted">{{ booking.event.event_date}} - {{ booking.event.url_or_address }}</p>
                     <p>{{ booking.event.short_description }}</p>
                     <p>
-                        <a href="{% url 'event-detail' booking.event.id %}" aria-label="Click here to go to the View Event page for {{ booking.event.event_name }}" class="btn btn-lg btn-success mx-2" aria-label="Click here to view the event page for {{ booking.event.event_name }}">
+                        <a href="{% url 'event-detail' booking.event.id %}" aria-label="Click here to go to the View Event page for {{ booking.event.event_name }}" class="btn btn-lg btn-success mx-2">
                             View Event
                         </a>
+                        <a href="{% url 'edit-booking' booking.event.id %}" aria-label="Click here to go to the Edit Booking page for {{ booking.event.event_name }}" class="btn btn-lg btn-warning mx-2">
+                            Edit Booking
+                        </a>
+
                     </p>
                 </div>
                 <div class="card-footer">
