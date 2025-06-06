@@ -173,8 +173,7 @@ def delete_event_view(request, event_id):
     if request.user != event.event_organiser:
         messages.error(request, not_authorised_error)
         return redirect('event-detail', event_id=event_id)
-
-    if request.method == 'POST':
+    else:
         event.delete()
         messages.success(request, success_message)
         return redirect('my-events')
@@ -224,6 +223,45 @@ def review_event_view(request, event_id):
         'form': review_form
     }
     return render(request, 'events/review-event.html', context)
+
+
+def edit_review_view(request, review_id):
+    review = get_object_or_404(Review, id=review_id)
+    event = get_object_or_404(Event, id=review.event.id)
+    success_message = ('Your updated review is now awaiting approval.')
+    error_message = ('Review was unable to be updated.')
+
+    if request.method == 'POST':
+        review_form = ReviewForm(data=request.POST, instance=review)
+        if review_form.is_valid() and review.author == request.user:
+            review = review_form.save()
+            messages.success(request, success_message)
+            return redirect('event-detail', event_id=event.id)
+        else:
+            messages.error(request, error_message)
+            return redirect('event-detail', event_id=event.id)
+    else:
+        review_form = ReviewForm(instance=review)
+
+    context = {
+        'form': review_form,
+        'event': event,
+        'review': review,
+    }
+
+    return render(request, 'events/edit-review.html', context)
+
+
+def delete_review_view(request, review_id):
+    review = get_object_or_404(Review, id=review_id)
+
+    if review.author != request.user:
+        messages.error(request, "You can not delete other people's reviews.")
+        return redirect('event-detail', event_id=review.event.id)
+    else:
+        review.delete()
+        messages.success(request, 'Your review has now been deleted.')
+        return redirect('event-detail', event_id=review.event.id)
 
 
 def search_events_view(request):
@@ -293,7 +331,7 @@ def edit_booking_view(request, event_id):
         Booking,
         event=event,
         ticketholder=request.user
-        )
+    )
     if request.method == 'POST':
         booking_form = BookingForm(
             request.POST,
@@ -310,10 +348,23 @@ def edit_booking_view(request, event_id):
             instance=booking,
             event=event,
             user=request.user
-            )
+        )
 
     context = {
         'event': event,
-        'form': booking_form
+        'form': booking_form,
+        'booking': booking,
     }
     return render(request, 'events/edit-booking.html', context)
+
+
+def delete_booking_view(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+
+    if booking.ticketholder != request.user:
+        messages.error(request, "You can not cancel other people's bookings.")
+        return redirect('event-detail', event_id=booking.event.id)
+    else:
+        booking.delete()
+        messages.success(request, 'Your booking has now been cancelled.')
+        return redirect('event-detail', event_id=booking.event.id)
