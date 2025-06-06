@@ -234,7 +234,9 @@ def edit_review_view(request, review_id):
     if request.method == 'POST':
         review_form = ReviewForm(data=request.POST, instance=review)
         if review_form.is_valid() and review.author == request.user:
-            review = review_form.save()
+            review = review_form.save(commit=False)
+            review.approved = False
+            review.save()
             messages.success(request, success_message)
             return redirect('event-detail', event_id=event.id)
         else:
