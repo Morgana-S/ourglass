@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+<!-- Book Tickets Section -->
+<section id="book-tickets">
+    <div class="container">
+        <div class="col-md-6 mb-3 mt-2 mx-auto text-center">
+            <div id="book-tickets-header">
+                <h2>Book Tickets for {{ event.event_name }}</h2>
+            </div>
+            <div id="book-tickets-body">
+                <p>
+                    Thank you for choosing to book tickets for {{ event.event_name }}. Please confirm the number of tickets you'd like below.
+                </p>
+            </div>
+            <form method="post" action="{% url 'book-event' event.id %}" id="booking-form">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{field.label}}</label>
+                    {{ field|add_class:"form-control" }}
+                    {% if field.help_text %}
+                    <div class="form-text">{{ field.help_text }}</div>
+                    {% endif %}
+                    {{ field.errors }}
+                </div>
+                {% endfor %}
+                <button id="submit-button" type="submit" class="btn btn-success btn-lg">
+                    Book Tickets
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock content %}
