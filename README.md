@@ -10,6 +10,8 @@ Ourglass is a web application created to make the process of creating and attend
 
 - The current_attendees variable for the event model is now dynamically defined using an @property decorator in the Event model. This is then subsequently validated in the BookingForm.
 
+- Initial user stories did not include delete functionality for Events, Bookings, or Reviews. This was added in later.
+
 ## Potential Future Improvements
 
 - Google Maps, or similar Map API implementation on the event page to show users better details on where the events are.
