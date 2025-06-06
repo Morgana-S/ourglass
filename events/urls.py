@@ -17,16 +17,31 @@ urlpatterns = [
         views.edit_booking_view,
         name='edit-booking'
     ),
-    path('events/create-event/', views.create_event_view, name='create-event'),
     path(
         'events/edit-event/<int:event_id>/',
         views.edit_event_view,
         name='edit-event'
     ),
     path(
+        'events/edit-review/<int:review_id>/',
+        views.edit_review_view,
+        name='edit-review'
+    ),
+    path('events/create-event/', views.create_event_view, name='create-event'),
+    path(
+        'events/delete-booking/<int:booking_id>/',
+        views.delete_booking_view,
+        name='delete-booking'
+    ),
+    path(
         'events/delete-event/<int:event_id>/',
         views.delete_event_view,
         name='delete-event'
+    ),
+    path(
+        'events/delete-review/<int:review_id>/',
+        views.delete_review_view,
+        name='delete-review'
     ),
     path('events/review-event/<int:event_id>/',
          views.review_event_view,
