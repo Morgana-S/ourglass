@@ -7,6 +7,16 @@ urlpatterns = [
         views.event_detail_view,
         name='event-detail'
     ),
+    path(
+        'events/book-event/<int:event_id>/',
+        views.booking_tickets_view,
+        name='book-event'
+    ),
+    path(
+        'events/edit-booking/<int:event_id>/',
+        views.edit_booking_view,
+        name='edit-booking'
+    ),
     path('events/create-event/', views.create_event_view, name='create-event'),
     path(
         'events/edit-event/<int:event_id>/',
