@@ -1,12 +1,12 @@
+const ratings = document.querySelectorAll('.review-rating');
+const deleteButton = document.getElementById('confirm-delete');
+
 /**
  * Ensures the DOM Content is loaded before executing functions
  */
 document.addEventListener('DOMContentLoaded', function () {
 	ratingsConverter();
-	document
-		.getElementById('confirm-delete')
-		.addEventListener('click', deleteButton);
-	console.log('DOM Content Loaded');
+	deleteButtonEnable();
 });
 
 /**
@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', function () {
  * FontAwesome
  */
 function ratingsConverter() {
-	const ratings = document.querySelectorAll('.review-rating');
 	ratings.forEach((element) => {
 		const rating = parseInt(element.dataset.rating);
 		let starsHtml = '';
@@ -25,6 +24,10 @@ function ratingsConverter() {
 	});
 }
 
-function deleteButton() {
-	document.getElementById('delete-form').submit();
+function deleteButtonEnable() {
+	if (deleteButton) {
+		deleteButton.addEventListener('click', function () {
+			document.getElementById('delete-form').submit();
+		});
+	}
 }
