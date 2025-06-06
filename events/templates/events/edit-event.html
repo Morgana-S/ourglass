@@ -11,9 +11,8 @@
             {% if request.user == event.event_organiser %}
             <div id="edit-event-body">
                 <p>
-                    Thank you for choosing to create an event using Ourglass! Please enter the event information below.
+                    Please change the information you wish to amend in the fields below.
                 </p>
-                <p class="text-danger">Please note that all fields below are required.</p>
             </div>
             <form method="post" action="{% url 'edit-event' event.id %}" enctype="multipart/form-data" id="event-form">
                 {% csrf_token %}
