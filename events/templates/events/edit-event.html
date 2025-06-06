@@ -13,28 +13,32 @@
                 <p>
                     Please change the information you wish to amend in the fields below.
                 </p>
+                <form method="post" action="{% url 'edit-event' event.id %}" enctype="multipart/form-data" id="event-form">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{field.label}}</label>
+                        {% if field.field.widget.input_type == 'checkbox' %}
+                        {{ field|add_class:"form-check-input" }}
+                        {% else %}
+                        {{ field|add_class:"form-control" }}
+                        {% endif %}
+                        {% if field.help_text %}
+                        <div class="form-text">{{ field.help_text }}</div>
+                        {% endif %}
+                        {{ field.errors }}
+                    </div>
+                    {% endfor %}
+                    <button id="submit-button" type="submit" class="btn btn-success btn-lg">
+                        Edit Event
+                    </button>
+                </form>
+                <form id="delete-event-form" action="{% url 'delete-event' event.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-lg btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#delete-event-modal">Delete Event</button>
+                </form>
             </div>
-            <form method="post" action="{% url 'edit-event' event.id %}" enctype="multipart/form-data" id="event-form">
-                {% csrf_token %}
-                {{ form.non_field_errors }}
-                {% for field in form %}
-                <div class="mb-3">
-                    <label for="{{ field.id_for_label }}" class="form-label">{{field.label}}</label>
-                    {% if field.field.widget.input_type == 'checkbox' %}
-                    {{ field|add_class:"form-check-input" }}
-                    {% else %}
-                    {{ field|add_class:"form-control" }}
-                    {% endif %}
-                    {% if field.help_text %}
-                    <div class="form-text">{{ field.help_text }}</div>
-                    {% endif %}
-                    {{ field.errors }}
-                </div>
-                {% endfor %}
-                <button id="submit-button" type="submit" class="btn btn-success btn-lg">
-                    Edit Event
-                </button>
-            </form>
             {% else %}
             <p>You are not able to edit this event as you are not the event organiser.</p>
             <a class="btn btn-success" href="{% url 'event-detail' event.id %}" aria-label="Click here to return to the event detail page for {{ event.event_name }}">Return to event detail page</a>
@@ -42,4 +46,22 @@
         </div>
     </div>
 </section>
+<!-- Delete Confirmation Modal -->
+<div id="delete-event-modal" class="modal fade" tabindex="-1" aria-hidden="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>Delete Event</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this event? This action can not be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="confirm-delete-button" type="button" class="btn btn-danger">Delete Event</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
