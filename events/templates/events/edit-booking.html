@@ -10,7 +10,10 @@
             </div>
             <div id="book-tickets-body">
                 <p>
-                    Please note tickets are subject to availability - if you lower the number of tickets you have now, they may not be available later.
+                    Please note tickets are subject to availability.
+                </p>
+                <p class="text-danger">
+                    If you change your number of tickets to be lower, or cancel the booking entirely, more tickets may not be available later.
                 </p>
             </div>
             <form method="post" action="{% url 'edit-booking' event.id %}" id="edit-booking-form">
@@ -30,7 +33,29 @@
                     Edit Booking
                 </button>
             </form>
+            <form id="delete-form" action="{% url 'delete-booking' booking.id %}" method="post">
+                {% csrf_token %}
+                <button type="button" class="btn btn-lg btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#cancel-booking-modal">Cancel Booking</button>
+            </form>
         </div>
     </div>
 </section>
+<!-- Delete Confirmation Modal -->
+<div id="cancel-booking-modal" class="modal fade" tabindex="-1" aria-hidden="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>Cancel Booking</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel your booking? This action can not be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Do Not Cancel Booking</button>
+                <button id="confirm-delete" type="button" class="btn btn-danger">Cancel Booking</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
