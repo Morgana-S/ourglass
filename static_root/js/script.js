@@ -3,7 +3,10 @@
  */
 document.addEventListener('DOMContentLoaded', function () {
 	ratingsConverter();
-	document.getElementById('confirm-delete-button').addEventListener('click', deleteEvent);
+	document
+		.getElementById('confirm-delete')
+		.addEventListener('click', deleteButton);
+	console.log('DOM Content Loaded');
 });
 
 /**
@@ -22,6 +25,6 @@ function ratingsConverter() {
 	});
 }
 
-function deleteEvent(){
-	document.getElementById('delete-event-form').submit();
+function deleteButton() {
+	document.getElementById('delete-form').submit();
 }
