@@ -9,7 +9,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import now
 from django.views import generic
 from .models import Event, Booking, Review
-from .forms import EventForm, ReviewForm
+from .forms import EventForm, ReviewForm, BookingForm
 # Create your views here.
 
 
@@ -86,9 +86,12 @@ def event_detail_view(request, event_id):
     page_obj = paginator.get_page(page_number)
     user_has_booking = False
     if request.user.is_authenticated:
-        user_has_booking = event.bookings.filter(
-            ticketholder=request.user
-        ).exists
+        user_booking = event.bookings.filter(ticketholder=request.user).first()
+        if user_booking:
+            user_has_booking = True
+            user_tickets = user_booking.tickets
+        else:
+            user_tickets = None
     user_has_reviewed = False
     if request.user.is_authenticated:
         user_has_reviewed = event.reviews.filter(
@@ -98,6 +101,7 @@ def event_detail_view(request, event_id):
     context = {
         'event': event,
         'user_has_booking': user_has_booking,
+        'user_tickets': user_tickets,
         'user_has_reviewed': user_has_reviewed,
         'reviews': page_obj,
         'past_event': has_event_passed,
@@ -234,3 +238,65 @@ def search_events_view(request):
         'include_past': include_past
     }
     return render(request, 'events/search-events.html', context)
+
+
+def booking_tickets_view(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+
+    if request.method == 'POST':
+        success_message = (
+            'Congratulations, your tickets are now booked.'
+        )
+        booking_form = BookingForm(
+            request.POST,
+            event=event,
+            user=request.user
+        )
+        if booking_form.is_valid():
+            booking = booking_form.save(commit=False)
+            booking.event = event
+            booking.ticketholder = request.user
+            booking.save()
+            messages.success(request, success_message)
+            return redirect('event-detail', event_id=event.id)
+    else:
+        booking_form = BookingForm(event=event, user=request.user)
+
+    context = {
+        'event': event,
+        'form': booking_form,
+    }
+    return render(request, 'events/book-event.html', context)
+
+
+def edit_booking_view(request, event_id):
+    success_message = 'Your booking has now been updated.'
+    event = get_object_or_404(Event, id=event_id)
+    booking = get_object_or_404(
+        Booking,
+        event=event,
+        ticketholder=request.user
+        )
+    if request.method == 'POST':
+        booking_form = BookingForm(
+            request.POST,
+            instance=booking,
+            event=event,
+            user=request.user
+        )
+        if booking_form.is_valid():
+            booking_form.save()
+            messages.success(request, success_message)
+            return redirect('event-detail', event_id=event.id)
+    else:
+        booking_form = BookingForm(
+            instance=booking,
+            event=event,
+            user=request.user
+            )
+
+    context = {
+        'event': event,
+        'form': booking_form
+    }
+    return render(request, 'events/edit-booking.html', context)
