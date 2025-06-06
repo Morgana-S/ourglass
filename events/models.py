@@ -75,4 +75,4 @@ class Review(models.Model):
     content = models.TextField(
         max_length=300
     )
-    approved = models.BooleanField()
+    approved = models.BooleanField(default=False)
