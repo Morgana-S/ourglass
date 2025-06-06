@@ -3,6 +3,7 @@
  */
 document.addEventListener('DOMContentLoaded', function () {
 	ratingsConverter();
+	document.getElementById('confirm-delete-button').addEventListener('click', deleteEvent);
 });
 
 /**
@@ -19,4 +20,8 @@ function ratingsConverter() {
 		}
 		element.innerHTML = starsHtml;
 	});
+}
+
+function deleteEvent(){
+	document.getElementById('delete-event-form').submit();
 }
