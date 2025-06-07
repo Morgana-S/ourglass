@@ -30,15 +30,16 @@ class MyEventsDashboardView(LoginRequiredMixin, generic.TemplateView):
 
     **Context**
     ``bookings``
-        All booking objects that belong to the user logged in
-        while on the page, excluding past events.
+        The paginated list of bookings provided by the bookings_qs queryset,
+        ordered by event date.
 
     ``organised_events``
-        All event objects that were created by the logged in user.
+        The paginated list of organised events provided by the
+        organised_events_qs queryset, ordered by event date.
 
     ``previous_bookings``
-        All booking objects that belong to the user logged in
-        while on the page, but only past events.
+        The paginated list of previous bookings provided by the
+        previous_bookings_qs queryset, ordered by event date.
 
     **Template**
     :template:`events/my-events.html`
@@ -54,21 +55,50 @@ class MyEventsDashboardView(LoginRequiredMixin, generic.TemplateView):
             author=user,
             event=OuterRef('event')
         )
-        context['bookings'] = Booking.objects.filter(
+        bookings_qs = Booking.objects.filter(
             ticketholder=user
         ).exclude(
             event__event_date__lt=now()
+        ).order_by(
+            'event__event_date'
         )
-        context['organised_events'] = Event.objects.filter(
+        organised_events_qs = Event.objects.filter(
             event_organiser=user
         ).exclude(
             event_date__lt=now()
+        ).order_by(
+            'event_date'
         )
-        context['previous_bookings'] = Booking.objects.filter(
+        previous_bookings_qs = Booking.objects.filter(
             ticketholder=user,
             event__event_date__lt=now(),
         ).annotate(
             has_review=Exists(reviews)
+        ).order_by(
+            'event__event_date'
+        )
+
+        # Pagination
+        bookings_page_number = self.request.GET.get('bookings_page', 1)
+        organised_events_page_number = self.request.GET.get(
+            'organised_events_page',
+            1
+        )
+        previous_bookings_page_number = self.request.GET.get(
+            'previous_bookings_page',
+            1
+        )
+
+        bookings_paginator = Paginator(bookings_qs, 6)
+        organised_events_paginator = Paginator(organised_events_qs, 6)
+        previous_bookings_paginator = Paginator(previous_bookings_qs, 6)
+
+        context['bookings'] = bookings_paginator.get_page(bookings_page_number)
+        context['organised_events'] = organised_events_paginator.get_page(
+            organised_events_page_number
+        )
+        context['previous_bookings'] = previous_bookings_paginator.get_page(
+            previous_bookings_page_number
         )
 
         return context
