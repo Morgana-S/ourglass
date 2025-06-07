@@ -7,33 +7,66 @@
             <h2>My Bookings</h2>
             <hr>
         </div>
-        <div class="row mb-3 card-group" id="bookings-body">
+        <div class="row justify-content-center" id="bookings-body">
+            {% if not bookings|length == 0%}
             {% for booking in bookings %}
-            <div class="card col-sm-1 col-md-3 col-lg-4 mx-auto rounded">
-                <img class="card-img-top img-fluid" src="{{ booking.event.image.url}}" alt="{{ booking.event.event_name }}">
-                <div class="ms-3">
-                    <h2>{{booking.event.event_name}} - x{{ booking.tickets }} ticket{{ booking.tickets|pluralize }}</h2>
-                    <p class="card-subtitle text-muted">{{ booking.event.event_date}} - {{ booking.event.url_or_address }}</p>
-                    <p>{{ booking.event.short_description }}</p>
-                    <p>
-                        <a href="{% url 'event-detail' booking.event.id %}" aria-label="Click here to go to the View Event page for {{ booking.event.event_name }}" class="btn btn-lg btn-success mx-2">
-                            View Event
-                        </a>
-                        <a href="{% url 'edit-booking' booking.event.id %}" aria-label="Click here to go to the Edit Booking page for {{ booking.event.event_name }}" class="btn btn-lg btn-warning mx-2">
-                            Edit Booking
-                        </a>
-
-                    </p>
-                </div>
-                <div class="card-footer">
-                    <p>
-                        Last updated on {{ booking.event.updated_on }}
-                    </p>
+            <div class="col col-sm-12 col-md-6 col-lg-4 mb-4">
+                <div class="card rounded flex-fill h-100 d-flex d-column">
+                    <img class="card-img-top img-fluid" src="{{ booking.event.image.url}}" alt="{{ booking.event.event_name }}">
+                    <div class="card-body d-flex flex-column">
+                        <h2>{{booking.event.event_name}} - x{{ booking.tickets }} ticket{{ booking.tickets|pluralize }}</h2>
+                        <p class="card-subtitle text-muted">{{ booking.event.event_date}} - {{ booking.event.url_or_address }}</p>
+                        <p>{{ booking.event.short_description }}</p>
+                        <div class="mt-auto">
+                            <p>
+                                <a href="{% url 'event-detail' booking.event.id %}" aria-label="Click here to go to the View Event page for {{ booking.event.event_name }}" class="btn btn-lg btn-success mx-2">
+                                    View Event
+                                </a>
+                                <a href="{% url 'edit-booking' booking.event.id %}" aria-label="Click here to go to the Edit Booking page for {{ booking.event.event_name }}" class="btn btn-lg btn-warning mx-2">
+                                    Edit Booking
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <p>
+                            Last updated on {{ booking.event.updated_on }}
+                        </p>
+                    </div>
                 </div>
             </div>
             {% endfor %}
+            {% else %}
+            <p>You don't seem to have booked any tickets yet - why not search for an event and join in the fun?</p>
+            {% endif%}
         </div>
     </div>
+    <!-- Pagination Controls: Bookings -->
+    <nav aria-label="Bookings Pagination">
+        <div class="d-flex justify-content-center">
+            <ul class="pagination justify-content-center">
+                {% if bookings.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?bookings_page={{ bookings.previous_page_number }}" aria-label="Click here to go to the previous page of bookings">
+                        &laquo;
+                    </a>
+                </li>
+                {% endif %}
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        Page {{ bookings.number }} of {{ bookings.paginator.num_pages }}
+                    </span>
+                </li>
+                {% if bookings.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?bookings_page={{ bookings.next_page_number }}" aria-label="Click here to go to the next page of bookings">
+                        &raquo;
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
 </section>
 <!-- Organised Events Section -->
 <section id="my-organised-events">
@@ -42,28 +75,32 @@
             <h2>My Organised Events</h2>
             <hr>
         </div>
-        <div class="row mb-3 card-group" id="events-body">
+        <div class="row justify-content-center" id="events-body">
             {% if not organised_events|length == 0%}
             {% for event in organised_events %}
-            <div class="card col-sm-1 col-md-3 col-lg-4 rounded mx-auto">
-                <img src="{{ event.image.url}}" alt="{{ event.event_name }}">
-                <div class="ms-3">
-                    <h2>{{event.event_name}}</h2>
-                    <p class="card-subtitle text-muted">{{ event.event_date}}</p>
-                    <p>{{ event.short_description }}</p>
-                    <p>
-                        <a href="{% url 'event-detail' event.id %}" aria-label="Click here to go to the View Event page for {{ event.event_name }}" class="btn btn-lg btn-success mx-2" aria-label="Click here to view the event page for {{ event.event_name }}">
-                            View Event
-                        </a>
-                        {% if user == event.event_organiser %}
-                        <a href="{% url 'edit-event' event.id %}" class="btn btn-lg btn-warning mx-2" aria-label="Click here to go to the Edit Event page for {{ event.event_name }}">Edit Event</a>
-                        {% endif %}
-                    </p>
-                </div>
-                <div class="card-footer">
-                    <p>
-                        Last updated on {{ event.updated_on }}
-                    </p>
+            <div class="col col-sm-12 col-md-6 col-lg-4 mb-4">
+                <div class="card rounded flex-fill h-100 d-flex flex-column">
+                    <img class="card-img-top img-fluid" src="{{ event.image.url}}" alt="{{ event.event_name }}">
+                    <div class="card-body d-flex flex-column">
+                        <h2>{{event.event_name}}</h2>
+                        <p class="card-subtitle text-muted">{{ event.event_date}}</p>
+                        <p>{{ event.short_description }}</p>
+                        <div class="mt-auto">
+                            <p>
+                                <a href="{% url 'event-detail' event.id %}" aria-label="Click here to go to the View Event page for {{ event.event_name }}" class="btn btn-lg btn-success mx-2" aria-label="Click here to view the event page for {{ event.event_name }}">
+                                    View Event
+                                </a>
+                                {% if user == event.event_organiser %}
+                                <a href="{% url 'edit-event' event.id %}" class="btn btn-lg btn-warning mx-2" aria-label="Click here to go to the Edit Event page for {{ event.event_name }}">Edit Event</a>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <p>
+                            Last updated on {{ event.updated_on }}
+                        </p>
+                    </div>
                 </div>
             </div>
             {% endfor %}
@@ -72,40 +109,100 @@
             {% endif %}
         </div>
     </div>
+    <!-- Pagination Controls: Organised Events -->
+    <nav aria-label="Organised Events Pagination">
+        <div class="d-flex justify-content-center">
+            <ul class="pagination justify-content-center">
+                {% if organised_events.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?organised_events_page={{ organised_events.previous_page_number }}" aria-label="Click here to go to the previous page of organised events">
+                        &laquo;
+                    </a>
+                </li>
+                {% endif %}
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        Page {{ organised_events.number }} of {{ organised_events.paginator.num_pages }}
+                    </span>
+                </li>
+                {% if organised_events.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?organised_events_page={{ organised_events.next_page_number }}" aria-label="Click here to go to the next page of organised events">
+                        &raquo;
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
 </section>
 <!-- Previous Bookings Section -->
-{% if not previous_bookings|length == 0 %}
 <section id="previous-bookings">
     <div class="container">
         <div id="previous-bookings-header">
             <h2>Your Previous Events - Leave a Review!</h2>
             <hr>
         </div>
-        <div class="row mb-3 card-group" id="previous-bookings-body">
+        <div class="row justify-content-center" id="previous-bookings-body">
+            {% if not previous_bookings|length == 0 %}
             {% for previous_booking in previous_bookings %}
-            <div class="card col-sm-1 col-md-3 col lg-4 rounded mx-auto">
-                <img src="{{ previous_booking.event.image.url}}" alt="{{ previous_booking.event.event_name }}">
-                <div class="ms-3">
-                    <h2>{{previous_booking.event.event_name}}</h2>
-                    <p class="card-subtitle text-muted">{{ previous_booking.event.event_date}}</p>
-                    <p>{{ previous_booking.event.short_description }}</p>
-                    <p>
-                        <a href="{% url 'event-detail' previous_booking.event.id %}" class="btn btn-lg btn-success mx-2" aria-label="Click here to go to the View Event page for {{ previous_booking.event.event_name }}">
-                            View Event
-                        </a>
-                        {% if not previous_booking.has_review %}
-                        <a href="{% url 'review-event' previous_booking.event.id %}" class="btn btn-lg btn-warning mx-2" aria-label="Click here to go to the Review Event page for {{ previous_booking.event.event_name }}">
-                            Review Event
-                        </a>
-                        {% else %}
-                        <button class="btn btn-lg btn-warning disabled">Event already reviewed</button>
-                        {% endif %}
-                    </p>
+            <div class="col col-sm-12 col-md-6 col-lg-4 mb-4">
+                <div class="card rounded flex-fill h-100 d-flex flex-column">
+                    <img class="card-img-top img-fluid" src="{{ previous_booking.event.image.url}}" alt="{{ previous_booking.event.event_name }}">
+                    <div class="card-body d-flex flex-column">
+                        <h2>{{previous_booking.event.event_name}}</h2>
+                        <p class="card-subtitle text-muted">{{ previous_booking.event.event_date}}</p>
+                        <p>{{ previous_booking.event.short_description }}</p>
+                        <div class="mt-auto">
+                            <p>
+                                <a href="{% url 'event-detail' previous_booking.event.id %}" class="btn btn-lg btn-success mx-2" aria-label="Click here to go to the View Event page for {{ previous_booking.event.event_name }}">
+                                    View Event
+                                </a>
+                                {% if not previous_booking.has_review %}
+                                <a href="{% url 'review-event' previous_booking.event.id %}" class="btn btn-lg btn-warning mx-2" aria-label="Click here to go to the Review Event page for {{ previous_booking.event.event_name }}">
+                                    Review Event
+                                </a>
+                                {% else %}
+                                <a href="{% url 'review-event' previous_booking.event.id %}" class="btn btn-lg btn-warning mx-2 disabled" aria-label="Click here to go to the Review Event page for {{ previous_booking.event.event_name }}">
+                                    Event Reviewed
+                                </a>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
             {% endfor %}
+            {% else %}
+            <p>You don't seem to have any previous bookings.</p>
+            {% endif %}
         </div>
     </div>
+    <!-- Pagination Controls: Previous Bookings -->
+    <nav aria-label="Previous Bookings Pagination">
+        <div class="d-flex justify-content-center">
+            <ul class="pagination justify-content-center">
+                {% if previous_bookings.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?previous_bookings_page={{ previous_bookings.previous_page_number }}" aria-label="Click here to go to the previous page of previous bookings">
+                        &laquo;
+                    </a>
+                </li>
+                {% endif %}
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        Page {{ previous_bookings.number }} of {{ previous_bookings.paginator.num_pages }}
+                    </span>
+                </li>
+                {% if previous_bookings.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?previous_bookings_page={{ previous_bookings.next_page_number }}" aria-label="Click here to go to the next page of previous bookings">
+                        &raquo;
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
 </section>
-{% endif %}
 {% endblock content %}
