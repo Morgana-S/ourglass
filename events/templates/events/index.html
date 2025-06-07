@@ -52,7 +52,7 @@
         </div>
         <div class="col-lg-6 mx-auto pb-5">
             <form action="{% url 'search-events' %}" method="get" class="text-center">
-                <input class="form-control form-control-lg mb-3" type="search" name="q" placeholder="Search for Events (Leave Blank to View All Events)" value="{{ request.GET.q }}">
+                <input class="form-control form-control-lg mb-3" type="search" name="q" placeholder="Search by Event Name" value="{{ request.GET.q }}">
 
                 <div class="form-check mb-3 d-flex justify-content-center align-items-center gap-2">
                     <input type="checkbox" name="past-events" id="past-events" class="form-check-input">
