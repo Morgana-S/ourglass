@@ -416,7 +416,7 @@ def search_events_view(request):
 
     events = Event.objects.filter(
         Q(event_name__icontains=query)
-    ).order_by('-event_date')
+    ).order_by('event_date')
 
     if not include_past:
         events = events.filter(event_date__gte=now())
