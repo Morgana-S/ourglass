@@ -173,3 +173,11 @@ LOGIN_REDIRECT_URL = '/'
 # Crispy Forms settings
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
+
+# Summernote Config
+SUMMERNOTE_CONFIG = {
+    # Set width at 100% to stop overflow
+    'summernote': {
+        'width': '100%',
+    }
+}
