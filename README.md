@@ -1,8 +1,22 @@
-# Ourglass
+# Ourglass - Workshop, Course, and Event Booking Web Application
+
+## About
 
 Ourglass is a web application created to make the process of creating and attending public workshops and classes easier. Ourglass is a web application that utilises HTML, CSS, JavaScript and Python, as well as utilising the Django and Bootstrap frameworks.
 
 **The deployed version of the application can be accessed [here](https://ourglass-b80df2533ddf.herokuapp.com/).**
+
+## UI and UX Design
+
+## Target Audience
+
+## Epics and User Stories
+
+## Features
+
+## Models
+
+## Testing, Bugs & Code Validation
 
 ## Changes and Considerations whilst the project was underway
 
@@ -21,6 +35,8 @@ Ourglass is a web application created to make the process of creating and attend
 - Ratings data aggregation on the user profile pages, as well as fleshing out the user profile page more so that it's easier to see how many ratings an event organiser has, the average of their ratings, etc.
 
 - Implementation of a proper user-to-user messaging system, as opposed to the defunct Comment model. This would allow users to message event organisers directly for any questions they might have.
+
+# Deployment
 
 ## Credits
 
