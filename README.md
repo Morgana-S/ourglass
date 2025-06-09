@@ -112,6 +112,82 @@ Acceptance Criteria:
 
 ## Features
 
+### Context Sensitive Index Page
+![Context Sensitive Index Page](/documentation/feature-images/context-sensitive-index.gif)
+If the user is not logged in, they are presented with a landing page which explains the purpose of the website. When an account is created and they are logged in, this is replaced with more relevant functionality, such as a list of the latest events and the ability to search for events.
+
+### Context Sensitive Navbar
+![Context Sensitive Navbar](/documentation/feature-images/context-sensitive-navbar.gif)
+The user's navbar changes depending on if they are logged in or not, providing relevant options to both users and funneling anonymous users towards creating an account for utilisation of the website.
+
+### Account Registration
+![Account Registration](/documentation/feature-images/account-registration.gif)
+Users are able to register accounts on the website using django all-auth and crispy-forms. Users are then required to verify their email address before being able to access site features.
+
+### Account Login
+![Account Login](/documentation/feature-images/account-login.gif)
+Users can then log into their account once it has been verified, and are provided a message confirming the success of doing so.
+
+### Account Logout
+![Account logout](/documentation/feature-images/account-logout.gif)
+When the user is done with their session, they can easily log out of their account in one click on the navbar.
+
+
+### Search for Events
+![Searching for Events](/documentation/feature-images/search-for-events.gif)
+Users can search for events when logged in by typing in words associated with the event. If the search field is left blank, all events will be listed. Clicking 'view event' on each one takes you to the event detail page.
+
+### View Latest Events
+![Viewing Latest Events](/documentation/feature-images/latest-events.gif)
+A carousel on the index page appears for logged in users, which documents the last five created events. This provides event organisers with a chance to have their events on every user's index page, encouraging them to join. A bootstrap carousel component is used to make this feature both visually appealing and mobile accessible, as mobile users can swipe between the carousel items. Desktop users are able to user the included arrow icons to navigate. Clicking 'view event' on each one takes you to the event detail page.
+
+### Event Detail Page
+![Event Detail Page](/documentation/feature-images/event-detail-page.gif)
+When a user has found an event they like, they can then view the event details in full. This includes the event name, event address or url, number of people booked, as well as a longer description of the event, rather than the short description often provided on event cards. The Event detail page also contains the option to book tickets for the event, and view reviews for past events.
+
+### Booking Tickets
+![Booking Tickets](/documentation/feature-images/booking-tickets.gif)
+If a user decided to attend an event, they can then book tickets using a simple form which only asks them to provide the number of tickets they want to book. The event then updates to show that the number of tickets has been booked, and navigating to the users My Events page, the user can then find a list of all their future bookings.
+
+### Editing or Cancelling a Booking
+![Editing or cancelling a booking](/documentation/feature-images/cancelling-booking.gif)
+If a user decided they want to book more or less tickets for an event, or cancel their booking all together, they can do so from both the My Events page and the Event Detail page. The user is asked to change their ticket amounts - these are checked against the current availability of tickets for the user. If the user decided to cancel their booking altogether, they are asked to confirm before the booking is cancelled.
+
+### Creating an Event
+![Creating an Event](/documentation/feature-images/creating-events.gif)
+Creating an event is a simple process. The user can click on the Create Event option on the navbar, fill out the details of their event and provide an image (with formatting for a long description provided by django-summernote) and submit their event.
+
+### Editing or Deleting Events
+![Editing an Event](/documentation/feature-images/editing-events.gif)
+![Deleting an Event](/documentation/feature-images/deleting-events.gif)
+If the user makes a mistake, or would like to edit the event details, they can do so by editing the event on the Event Details page, or their My Events page. Users can also delete Events if they decide to cancel them, and are asked to confirm that they would like to do so via a modal.
+
+### The My Events Dashboard
+![My Events Dashboard](/documentation/feature-images/my-events.gif)
+The My Events page acts as a dashboard for the user, where they can see at a glance all upcoming bookings, their organised events, and any past events so they can leave a review. Each area is paginated to allow for ease of reading and navigation.
+
+### Leaving Reviews
+![Leaving a Review](/documentation/feature-images/leaving-a-review.gif)
+Users who have attended an event can leave a review where they rate the event and provide feedback to the organiser. All reviews need to be approved before they are visible to anyone who is not the reviewer. This can be done by the site staff in the admin panel.
+
+### Editing or Deleting a Review
+![Editing or Deleting a Review](/documentation/feature-images/editing-a-review.gif)
+If the user makes a mistake during the review, it is easy for them to edit the review, or if they decide they don't want to leave a review after all, they can easily delete the review after confirming through a modal. If a user's review is approved, editing the review changes it back to unapproved, to avoid people using approved reviews to circumvent the site's policy on having friendly content.
+
+### Contact Us Page
+![Contact Us Form](/documentation/feature-images/contact-us.gif)
+If users want to contact the site administrators, they can fill out the form on the Contact Us page. If the user is logged in, they are not required to provide their contact details such as their name or email address, as these are pulled from their instance of the user model.
+
+### Form Verification
+![Form Validation - Events](/documentation/feature-images/form-validation.gif)
+![Form Validation - Reviews](/documentation/feature-images/form-validation-review.gif)
+All user forms, for creating events, making bookings, or writing reviews, are validated to prevent invalid or nonsensical inputs. Examples include booking events too far in the future, for too many people, leaving reviews that are too short.
+
+### Context-sensitive Event Details
+![Context Sensitive Event Details](/documentation/feature-images/context-sensitive-event-details.gif)
+Where it makes sense to, the user is prevented from doing things that don't really make sense - such as an event organiser booking tickets to their own event, users being able to edit events which they aren't the organiser of, and leaving reviews for events that haven't happened yet - or leaving more than one review per event, or leaving reviews for events they didn't attend.
+
+
 ## Models
 
 The project uses a variety of models, primarily centered on the process of creating, booking tickets for, and reviewing Events. These models were laid out in an Entity Relationship Diagram for advanced planning of the project details, which has been included here (if the image is too small, the full sized image can be found [here](/documentation/diagrams/ourglass_model_erd.png)):
