@@ -33,6 +33,20 @@
         </div>
         <div id="event-body" class="mt-3 px-2 py-2 border rounded">
             {{ event.long_description|safe }}
+            {% if request.user == event.event_organiser %}
+            <div class="mt-auto border rounded px-2 py-2">
+                <h4>Event Attendees</h3>
+                    {% if event.bookings.all %}
+                    <ul class="d-flex flex-wrap gap-2 list-unstyled">
+                        {% for booking in event.bookings.all %}
+                        <li class="border rounded px-1 py-2">{{ booking.ticketholder }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p>There doesn't appear to be any bookings for this event yet.</p>
+                    {% endif %}
+            </div>
+            {% endif %}
         </div>
         <hr>
     </div>
