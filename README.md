@@ -235,6 +235,8 @@ All reviews must be approved before being visible to anyone except the reviewer;
 
 - Implementation of a proper user-to-user messaging system, as opposed to the defunct Comment model. This would allow users to message event organisers directly for any questions they might have.
 
+- Account management on the user's behalf is barebones at the moment, with basic styling on the pages for password resets. Enhancing these features for users should be a priority for future work in the project, as this is an area the site is woefully lacking. Basic functionality exists if a user -needs- to reset, their password, but I wouldn't describe it as complete.
+
 # Deployment
 
 ## Deployment to Heroku
