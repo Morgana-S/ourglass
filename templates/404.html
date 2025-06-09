@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<section id="404-error">
+    <div class="container">
+        <div class="px-4 py-2 my-2 text-center">
+            <h2>404 Error - Page Not Found</h2>
+            <p>It looks like the page you're looking for can't be found. To go back to the home page, please click <a href="{% url 'index' %}" aria-label="Click here to go back to the homepage.">here.</a></p>
+        </div>
+    </div>
+</section>
+{% endblock content%}
