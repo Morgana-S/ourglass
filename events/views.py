@@ -1,6 +1,5 @@
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import (
     OuterRef, Exists, Q, Case, When, BooleanField, Value
@@ -21,7 +20,7 @@ class LatestEventList(generic.ListView):
     template_name = 'events/index.html'
 
 
-class MyEventsDashboardView(LoginRequiredMixin, generic.TemplateView):
+class MyEventsDashboardView(generic.TemplateView):
     """
     Returns all bookings that the user has tickets for, as well as all
     events the user has organised in one view.
