@@ -7,7 +7,7 @@ from .forms import MessageForm
 def message_view(request):
     """
     Returns a render with the MessageForm form to obtain information from the
-    user about their message. 
+    user about their message.
 
     **Context**
     ``form``
