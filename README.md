@@ -256,6 +256,20 @@ The project can also be deployed locally. To do so, please follow these instruct
 
 - [dj_database_url](https://pypi.org/project/dj-database-url/) - Allows usage of the DATABASE_URL environment variable for providing a django-compatible database definition.
 
+- [django-allauth](https://docs.allauth.org/en/latest/) Integrated authentication applications that assist with registration and management of user accounts.
+
+- [django-crispy-forms](https://django-crispy-forms.readthedocs.io/en/latest/) Provide bootstrap-capable form inputs using django template language.
+
+-[dj3-cloudinary-storage](https://github.com/tiagocordeiro/dj3-cloudinary-storage) Django integration with cloudinary storage API.
+
+- [django-summernote](https://github.com/lqez/django-summernote) - WYSIWYG Text editor for use in Django web applications.
+
+- [whitenoise](https://whitenoise.readthedocs.io/en/stable/django.html) - Allows deployment of static files to django projects when hosted on heroku via WSGI.
+
+- [gunicorn](https://gunicorn.org/) - Python WSGI HTTP server for hosting on heroku.
+
+- [psycopg2](https://pypi.org/project/psycopg2/) - PostgreSQL database adapter for use with Python.
+
 ## Modules
 
 ### Python
