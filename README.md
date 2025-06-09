@@ -248,6 +248,10 @@ The project can also be deployed locally. To do so, please follow these instruct
 
 ## Frameworks
 
+- [Django](https://www.djangoproject.com/) - Python-based web framework that allows fast deployment of web applications.
+
+- [Bootstrap](https://getbootstrap.com/) - JavaScript and CSS Framework that provides versatile classes for use in styling a website and providing interactivity.
+
 ## Libraries
 
 - [dj_database_url](https://pypi.org/project/dj-database-url/) - Allows usage of the DATABASE_URL environment variable for providing a django-compatible database definition.
@@ -302,4 +306,7 @@ The project can also be deployed locally. To do so, please follow these instruct
 ## Visual Assets
 
 - [Unsplash](https://unsplash.com/) - Royalty Free stock photographs used in Wireframes for Personas and in Event Images
+
 - [SVG Repo](https://www.svgrepo.com/svg/527141/hourglass) - Royalty Free SVG that serves as the basis of the favicon
+
+- [Bootstrap Icons](https://icons.getbootstrap.com/) - Provide the basis for svgs used to render as icons for the latest events carousel
