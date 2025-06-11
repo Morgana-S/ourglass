@@ -21,11 +21,20 @@ class EventForm(forms.ModelForm):
         widgets = {
             'event_date': forms.DateTimeInput(
                 attrs={
-                    'type': 'datetime-local',
-                    'class': 'form-control'
+                    'class': 'form-control flatpickr',
+                    'placeholder': 'Select date and time'
                 }
             ),
-            'long_description': SummernoteWidget()
+            'maximum_attendees': forms.NumberInput(
+                attrs={
+                    'class': 'form-control',
+                    'min': 1,
+                    'max': 200,
+                    'step': 1,
+                    'placeholder': 'Enter a number between 1 - 200'
+                }
+            ),
+            'long_description': SummernoteWidget(),
         }
 
     def clean_event_date(self):
