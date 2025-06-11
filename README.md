@@ -352,6 +352,8 @@ The project can also be deployed locally. To do so, please follow these instruct
 
 - [psycopg2](https://pypi.org/project/psycopg2/) - PostgreSQL database adapter for use with Python.
 
+- [flatpickr](https://flatpickr.js.org/) - Datetime picker that enables localisation of date-time picking for create-event functionality.
+
 ## Modules
 
 ### Python
