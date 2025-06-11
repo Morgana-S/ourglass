@@ -37,7 +37,7 @@
             </div>
             {% endfor %}
             {% else %}
-            <p>You don't seem to have booked any tickets yet - why not search for an event and join in the fun?</p>
+            <p>You don't seem to have booked any tickets yet - why not <a href="{% url 'all-events'%}" aria-label="Click here to go to a list of all events">look for an event and join in the fun?</a></p>
             {% endif%}
         </div>
     </div>
@@ -105,7 +105,7 @@
             </div>
             {% endfor %}
             {% else %}
-            <p>You don't seem to have any upcoming organised events.</p>
+            <p>You don't seem to have any upcoming organised events. Why not <a href="{% url 'create-event'%}" aria-label="Click here to create an event">create a new event yourself?</a></p>
             {% endif %}
         </div>
     </div>
@@ -174,7 +174,7 @@
             </div>
             {% endfor %}
             {% else %}
-            <p>You don't seem to have any previous bookings.</p>
+            <p>You don't seem to have any previous bookings. why not <a href="{% url 'all-events'%}" aria-label="Click here to go to a list of all events">book an event so you can leave feedback for it?</a></p>
             {% endif %}
         </div>
     </div>
