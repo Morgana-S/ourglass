@@ -27,7 +27,7 @@
     <script src="https://kit.fontawesome.com/dedbf6d909.js" crossorigin="anonymous"></script>
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
     <!-- Header Content -->
     <div class="container-fluid bg-light">
         <header>
@@ -108,20 +108,24 @@
     </aside>
     {% endif %}
     <!-- Main Content -->
-    <main>
+    <main class="flex-fill">
         <!-- Page Content -->
         {% block content %}
         {% endblock %}
     </main>
     <!-- Footer Content -->
-    <footer>
-        <div class="container-fluid navbar fixed-bottom bg-success" id="footer-container">
-            <div class="row mx-auto">
-                <div class="col-12">
-                    <h5 class="text-white">Copyright 2025, Morgana Stone</h5>
+    <footer class="">
+        <div class="sticky-footer container-fluid navbar bg-success mt-3" id="footer-container">
+            <div class="row d-flex justify-content-center align-items-center w-100 px-3">
+                <div class="col-6 text-center">
+                    <a class="link-light text-decoration-none" href="https://github.com/Morgana-S/ourglass" target="_blank" aria-label="Click here to go to the Github Page for this project" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Click here to go to the GitHub page for this project.">
+                        <i class="fa-brands fa-github"></i>
+                        <p class="small">GitHub</p>
+                    </a>
+                    <p class="small text-white">Copyright Morgana Stone, 2025</p>
+                </div>
                 </div>
             </div>
-        </div>
     </footer>
     <!-- Scripts -->
     <!-- Bootstrap -->
