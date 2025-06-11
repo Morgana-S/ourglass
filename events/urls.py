@@ -8,6 +8,11 @@ urlpatterns = [
         name='event-detail'
     ),
     path(
+        'events/all-events/',
+        views.all_events_view,
+        name='all-events'
+    ),
+    path(
         'events/book-event/<int:event_id>/',
         views.booking_tickets_view,
         name='book-event'
