@@ -445,6 +445,51 @@ def delete_review_view(request, review_id):
         return redirect('event-detail', event_id=review.event.id)
 
 
+def all_events_view(request):
+    """
+    View for viewing all events, used with the 'Book Events' link in 
+    the navbar. This displays all events that are in the future that the user
+    is eligible to book.
+
+    **Context**
+     ``events``
+        The paginated list of events.
+
+    **Template**
+    :template:`events/all-events.html`
+
+    """
+    not_logged_in_error = (
+        'You can not view events until you are logged in. '
+        'Please sign up for an account or log in using the log in page.'
+    )
+    if request.user.is_authenticated:
+        events = Event.objects.exclude(
+            event_organiser=request.user
+            ).filter(
+                event_date__gte=now()
+            ).order_by(
+            'event_date'
+        )
+
+        paginator = Paginator(events, 9)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        context = {
+            'events': page_obj,
+        }
+    else:
+        messages.error(
+            request,
+            not_logged_in_error
+        )
+        return redirect('index')
+
+
+    return render(request, 'events/all-events.html', context)
+
+
 def search_events_view(request):
     """
     View for event search results. Obtains the query information from the
