@@ -135,7 +135,7 @@ class BookingForm(forms.ModelForm):
         # Checks available event capacity
         if projected_attendees > self.event.maximum_attendees:
             raise forms.ValidationError(not_enough_spaces_error)
-        
+
         # Checks Event is not in the past
         if event_date < now:
             raise forms.ValidationError(past_event_error)
