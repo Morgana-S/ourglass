@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content%}
+<!-- All Events Section -->
+<section id="all-events">
+    <div class="container">
+        <div class="row mx-auto mb-3">
+            <div class="col text-center">
+                <h2>All Upcoming Events</h2>
+            </div>
+        </div>
+        {% if events %}
+        <div class="row justify-content center">
+            {% for event in events %}
+            <div class="col col-sm-12 col-md-6 col-lg-4 mb-4 d-flex">
+                <div class="card rounded flex-fill">
+                    <div class="card-body">
+                        <img class="card-img-top img-fluid" src="{{ event.image.url }}" alt="{{ event.event_name }}">
+                        <h2 class="card-title">{{ event.event_name }}</h2>
+                        <p class="text-muted card-subtitle">{{ event.event_date }} | {{ event.current_attendees }}/{{ event.maximum_attendees }} places booked</p>
+                        <p class="card-text">{{ event.short_description }}</p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="{% url 'event-detail' event.id %}" class="btn btn-success">View Event</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>There doesn't seem to be any future events. Why not go ahead and create one <a href="{% url 'create-event' %}" aria-label="Click here to create an event">here</a>?</p>
+        {% endif %}
+    </div>
+    <!-- Pagination Controls -->
+     <nav aria-label="All Events Pagination">
+        <div class="d-flex justify-content-center">
+            <ul class="pagination">
+                {% if events.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ query }}{% if include_past %}&past-events=on{% endif %}&page={{ events.previous_page_number }}" aria-label="Click here to navigate to the previous page of events">
+                        &laquo;
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo;</span>
+                </li>
+                {% endif %}
+                {% for num in events.paginator.page_range %}
+                {% if events.number == num %}
+                <li class="page-item active" aria-current="page"><span class="page-link">{{ num }}</span></li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ query }}{% if include_past %}&past-events=on{% endif %}&page={{ num }}">{{ num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+                {% if events.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ query }}{% if include_past %}&past-events=on{% endif %}&page={{ events.next_page_number }}" aria-label="Click here to navigate to the next page of events">&raquo;</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                {% endif %}
+            </ul>
+        </div>
+     </nav>
+</section>
+{% endblock content%}
