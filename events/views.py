@@ -195,19 +195,40 @@ def create_event_view(request):
         'Congratulations, your event has now been created '
         + 'and will now show up in your My Events Page.'
     )
-    if request.method == 'POST':
-        event_form = EventForm(request.POST, request.FILES)
-        if event_form.is_valid():
-            event = event_form.save(commit=False)
-            event.event_organiser = request.user
-            event.save()
-            messages.success(
-                request,
-                success_message
-            )
-            return redirect('my-events')
+    error_message = (
+        'Your event was not created. Please check the form fields and '
+        'ensure all of the details are valid.'
+    )
+    not_logged_in_error = (
+        'You cannot create an event as you are not currently logged in. '
+        'Please make an account using the sign up process, or log in.'
+    )
+
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            event_form = EventForm(request.POST, request.FILES)
+            if event_form.is_valid():
+                event = event_form.save(commit=False)
+                event.event_organiser = request.user
+                event.save()
+                messages.success(
+                    request,
+                    success_message
+                )
+                return redirect('my-events')
+            else:
+                messages.error(
+                    request,
+                    error_message
+                )
+        else:
+            event_form = EventForm()
     else:
-        event_form = EventForm()
+        messages.error(
+            request,
+            not_logged_in_error
+        )
+        return redirect('index')
 
     return render(request, 'events/create-event.html', {'form': event_form})
 
@@ -229,17 +250,29 @@ def edit_event_view(request, event_id):
     """
     success_message = 'Your event has now been updated.'
     error_message = 'Your event was not updated successfully.'
+    not_logged_in_error = (
+        'You cannot edit an event as you are not currently logged in. '
+        'Please make an account using the sign up process, or log in.'
+    )
     event = get_object_or_404(Event, id=event_id)
-    if request.method == 'POST':
-        event_form = EventForm(data=request.POST, instance=event)
-        if event_form.is_valid() and event.event_organiser == request.user:
-            event = event_form.save()
-            messages.success(request, success_message)
-            return redirect('event-detail', event_id=event.id)
+
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            event_form = EventForm(data=request.POST, instance=event)
+            if event_form.is_valid() and event.event_organiser == request.user:
+                event = event_form.save()
+                messages.success(request, success_message)
+                return redirect('event-detail', event_id=event.id)
+            else:
+                messages.error(request, error_message)
         else:
-            messages.error(request, error_message)
+            event_form = EventForm(instance=event)
     else:
-        event_form = EventForm(instance=event)
+        messages.error(
+            request,
+            not_logged_in_error
+        )
+        return redirect('index')
 
     context = {
         'form': event_form,
@@ -293,6 +326,10 @@ def review_event_view(request, event_id):
         'This may be because you have already left a review, or '
         'you did not attend this event.'
     )
+    not_logged_in_error = (
+        'You cannot review an event as you are not currently logged in. '
+        'Please make an account using the sign up process, or log in.'
+    )
     error_message = ("Sorry, your review wasn't able to be submitted")
     event = get_object_or_404(Event, id=event_id)
     user_has_booking = False
@@ -304,23 +341,29 @@ def review_event_view(request, event_id):
             author=request.user
         ).exists()
         eligible_reviewer = user_has_booking and not user_has_reviewed_event
-    if request.method == 'POST':
-        review_form = ReviewForm(request.POST)
-        if review_form.is_valid() and eligible_reviewer:
-            review = review_form.save(commit=False)
-            review.event = event
-            review.author = request.user
-            review.approved = False
-            review.save()
-            messages.success(request, success_message)
-            return redirect('event-detail', event_id=event.id)
-        elif not eligible_reviewer:
-            messages.error(request, ineligible_reviewer_error)
-            return redirect('event-detail', event_id=event.id)
+        if request.method == 'POST':
+            review_form = ReviewForm(request.POST)
+            if review_form.is_valid() and eligible_reviewer:
+                review = review_form.save(commit=False)
+                review.event = event
+                review.author = request.user
+                review.approved = False
+                review.save()
+                messages.success(request, success_message)
+                return redirect('event-detail', event_id=event.id)
+            elif not eligible_reviewer:
+                messages.error(request, ineligible_reviewer_error)
+                return redirect('event-detail', event_id=event.id)
+            else:
+                messages.error(request, error_message)
         else:
-            messages.error(request, error_message)
+            review_form = ReviewForm(instance=event)
     else:
-        review_form = ReviewForm(instance=event)
+        messages.error(
+            request,
+            not_logged_in_error
+        )
+        return redirect('index')
 
     context = {
         'event': event,
@@ -351,20 +394,31 @@ def edit_review_view(request, review_id):
     event = get_object_or_404(Event, id=review.event.id)
     success_message = ('Your updated review is now awaiting approval.')
     error_message = ('Review was unable to be updated.')
+    not_logged_in_error = (
+        'You cannot edit a review as you are not currently logged in. '
+        'Please make an account using the sign up process, or log in.'
+    )
 
-    if request.method == 'POST':
-        review_form = ReviewForm(data=request.POST, instance=review)
-        if review_form.is_valid() and review.author == request.user:
-            review = review_form.save(commit=False)
-            review.approved = False
-            review.save()
-            messages.success(request, success_message)
-            return redirect('event-detail', event_id=event.id)
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            review_form = ReviewForm(data=request.POST, instance=review)
+            if review_form.is_valid() and review.author == request.user:
+                review = review_form.save(commit=False)
+                review.approved = False
+                review.save()
+                messages.success(request, success_message)
+                return redirect('event-detail', event_id=event.id)
+            else:
+                messages.error(request, error_message)
+                return redirect('event-detail', event_id=event.id)
         else:
-            messages.error(request, error_message)
-            return redirect('event-detail', event_id=event.id)
+            review_form = ReviewForm(instance=review)
     else:
-        review_form = ReviewForm(instance=review)
+        messages.error(
+            request,
+            not_logged_in_error
+        )
+        return redirect('index')
 
     context = {
         'form': review_form,
@@ -455,26 +509,37 @@ def booking_tickets_view(request, event_id):
         booking instance afterwards - users are only expected to select
         their ticket amount.
     """
+    not_logged_in_error = (
+        'You cannot book tickets as you are not currently logged in. '
+        'Please make an account using the sign up process, or log in.'
+    )
     event = get_object_or_404(Event, id=event_id)
 
-    if request.method == 'POST':
-        success_message = (
-            'Congratulations, your tickets are now booked.'
-        )
-        booking_form = BookingForm(
-            request.POST,
-            event=event,
-            user=request.user
-        )
-        if booking_form.is_valid():
-            booking = booking_form.save(commit=False)
-            booking.event = event
-            booking.ticketholder = request.user
-            booking.save()
-            messages.success(request, success_message)
-            return redirect('event-detail', event_id=event.id)
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            success_message = (
+                'Congratulations, your tickets are now booked.'
+            )
+            booking_form = BookingForm(
+                request.POST,
+                event=event,
+                user=request.user
+            )
+            if booking_form.is_valid():
+                booking = booking_form.save(commit=False)
+                booking.event = event
+                booking.ticketholder = request.user
+                booking.save()
+                messages.success(request, success_message)
+                return redirect('event-detail', event_id=event.id)
+        else:
+            booking_form = BookingForm(event=event, user=request.user)
     else:
-        booking_form = BookingForm(event=event, user=request.user)
+        messages.error(
+            request,
+            not_logged_in_error
+        )
+        return redirect('index')
 
     context = {
         'event': event,
@@ -503,29 +568,40 @@ def edit_booking_view(request, event_id):
     :template:`events/edit-booking.html`
     """
     success_message = 'Your booking has now been updated.'
+    not_logged_in_error = (
+        'You cannot book tickets as you are not currently logged in. '
+        'Please make an account using the sign up process, or log in.'
+    )
     event = get_object_or_404(Event, id=event_id)
     booking = get_object_or_404(
         Booking,
         event=event,
         ticketholder=request.user
     )
-    if request.method == 'POST':
-        booking_form = BookingForm(
-            request.POST,
-            instance=booking,
-            event=event,
-            user=request.user
-        )
-        if booking_form.is_valid():
-            booking_form.save()
-            messages.success(request, success_message)
-            return redirect('event-detail', event_id=event.id)
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            booking_form = BookingForm(
+                request.POST,
+                instance=booking,
+                event=event,
+                user=request.user
+            )
+            if booking_form.is_valid():
+                booking_form.save()
+                messages.success(request, success_message)
+                return redirect('event-detail', event_id=event.id)
+        else:
+            booking_form = BookingForm(
+                instance=booking,
+                event=event,
+                user=request.user
+            )
     else:
-        booking_form = BookingForm(
-            instance=booking,
-            event=event,
-            user=request.user
+        messages.error(
+            request,
+            not_logged_in_error
         )
+        return redirect('index')
 
     context = {
         'event': event,
