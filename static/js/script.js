@@ -8,6 +8,11 @@ document.addEventListener('DOMContentLoaded', function () {
 	ratingsConverter();
 	deleteButtonEnable();
 	initializeTooltips();
+	flatpickr('.flatpickr', {
+		enableTime:  true,
+		dateFormat: 'Y-m-d\\TH:i',
+		locale: 'uk'
+	})
 });
 
 /**
