@@ -7,6 +7,7 @@ const deleteButton = document.getElementById('confirm-delete');
 document.addEventListener('DOMContentLoaded', function () {
 	ratingsConverter();
 	deleteButtonEnable();
+	initializeTooltips();
 });
 
 /**
@@ -30,4 +31,13 @@ function deleteButtonEnable() {
 			document.getElementById('delete-form').submit();
 		});
 	}
+}
+
+function initializeTooltips(){
+	const tooltipTriggerList = document.querySelectorAll(
+		'[data-bs-toggle=tooltip]'
+	);
+	const tooltipList = [...tooltipTriggerList].map(
+		(tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
+	);
 }
