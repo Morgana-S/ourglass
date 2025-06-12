@@ -32,4 +32,13 @@ Automated testing was carried out using the in-built django testing library, whi
     - This was discovered during automated testing using the test_redirect_if_not_logged_in test.
     - Fix: Changed the view to require the LoginRequiredMixin.
 
+- **event_detail_view: user_tickets were not being correctly instantiated if the user wasn't logged in.**
+    - This was discovered during automated testing using the test_event_detail_view_status_and_template test.
+    - Cause: user_tickets were being instantiated after the authentication check. 
+    - Fix: Instantiate user_tickets as None before checking if the user is authenticated.
+
+- **logout_view: While testing, despite the fact that it's testing for an anonymous user, django still tries to check if event.event_id is valid. An anonymous user should never see this template, as it's wrapped in an {% if request.user.is_authenticated %} conditional.**
+    - This was discovered during automated testing using the test_logs_user_out_and_redirects test.
+    - Fix: As this seems to be an unintended behaviour with how django works, a single event was mocked in the test setUp to ensure there was data that was valid.
+
 ## Code Validation
