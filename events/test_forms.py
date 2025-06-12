@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.utils import timezone
 from datetime import timedelta
-from django.core.files.uploadedfile import SimpleUploadedFile
 from .forms import EventForm, ReviewForm, BookingForm
 from .models import Event, Booking
 # Create your tests here.
