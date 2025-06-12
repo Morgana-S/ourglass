@@ -1256,3 +1256,126 @@ class TestSearchEventsView(TestCase):
         response_page_2 = self.client.get(self.url, {'q': 'Event', 'page': 2})
         self.assertEqual(response_page_2.status_code, 200)
         self.assertTrue(response_page_2.context['results'].has_previous())
+
+
+class TestBookingTicketsView(TestCase):
+    """
+    TestCase for the booking_events View.
+    """
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='test',
+            password='pass'
+        )
+        self.other_user = User.objects.create_user(
+            username='other',
+            password='pass'
+        )
+        self.event = Event.objects.create(
+            event_name='Test Event',
+            event_date=timezone.now() + timezone.timedelta(days=3),
+            created_on=timezone.now(),
+            image='test.jpg',
+            event_organiser=self.other_user,
+            is_online=True,
+            maximum_attendees=100,
+            short_description='Short description',
+            long_description='Long description',
+        )
+        self.url = reverse('book-event', args=[self.event.id])
+
+    def test_redirect_if_not_logged_in(self):
+        """
+        Tests that unauthenticated users are redirected to the index page,
+        and that they receive a message explaining they can't book tickets.
+        """
+        not_logged_in_error = (
+            'You cannot book tickets as you are not currently logged in. '
+            'Please make an account using the sign up process, or log in.'
+        )
+        response = self.client.get(self.url, follow=True)
+        self.assertRedirects(response, reverse('index'))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn(
+            not_logged_in_error,
+            [m.message for m in messages]
+        )
+
+    def test_get_request_renders_form_for_logged_in_user(self):
+        """
+        Logs the user in and checks that a GET request for the view shows for
+        a logged in user, that it calls the right template, and that the form
+        and event are passed to the view from the context.
+        """
+        self.client.login(username='test', password='pass')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'events/book-event.html')
+        self.assertIn('form', response.context)
+        self.assertIn('event', response.context)
+
+    def test_post_valid_booking_creates_booking(self):
+        """
+        Logs the user in and checks that the user can post a request to book
+        2 tickets for the event. Checks that the page redirects to the
+        event-detail page, confirms that the event now has a booking,
+        and that the booking characteristics match. Also confirms the user
+        received a message about the booking going through.
+        """
+        self.client.login(username='test', password='pass')
+        response = self.client.post(self.url, {
+            'tickets': 2,
+        }, follow=True)
+        self.assertRedirects(response, reverse(
+            'event-detail', args=[self.event.id]))
+        self.assertEqual(Booking.objects.count(), 1)
+        booking = Booking.objects.first()
+        self.assertEqual(booking.event, self.event)
+        self.assertEqual(booking.ticketholder, self.user)
+        self.assertEqual(booking.tickets, 2)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn(
+            'Congratulations, your tickets are now booked.',
+            [m.message for m in messages]
+        )
+
+    def test_post_invalid_data_does_not_create_booking(self):
+        """
+        Logs the user in, attempts to post a form without valid data. Checks
+        that the post method does not go through, that a booking is not created
+        and that the user is redirected to the same page with an error stating
+        the field is required for the tickets field.
+        """
+        self.client.login(username='test', password='pass')
+        response = self.client.post(self.url, {}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Booking.objects.count(), 0)
+        self.assertTemplateUsed(response, 'events/book-event.html')
+        form = response.context['form']
+        self.assertFormError(form, 'tickets', 'This field is required.')
+
+    def test_404_for_invalid_event_id(self):
+        """
+        Tests that a call for an invalid URL for an event returns a 404.
+        """
+        self.client.login(username='test', password='pass')
+        bad_url = reverse('book-event', args=[999])
+        response = self.client.get(bad_url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_user_cannot_book_own_event(self):
+        """
+        Tests that a user cannot book tickets for an event they created
+        themselves. Should redirect the user back to the book-event page
+        and create a message advising they cannot book their own event.
+        """
+        self.client.login(username='other', password='pass')
+        response = self.client.post(self.url, {'ticket': 1}, follow=True)
+        self.assertEqual(Booking.objects.count(), 0)
+        self.assertEqual(response.status_code, 200)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn(
+            "You cannot book your own event.",
+            [m.message for m in messages]
+        )
