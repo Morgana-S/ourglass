@@ -41,4 +41,8 @@ Automated testing was carried out using the in-built django testing library, whi
     - This was discovered during automated testing using the test_logs_user_out_and_redirects test.
     - Fix: As this seems to be an unintended behaviour with how django works, a single event was mocked in the test setUp to ensure there was data that was valid.
 
+- **delete_event_view: Anonymous users were being directed back to the event-detail page when they attempted to delete an event.**
+    - Cause: This is because the view did not check whether the user is authenticated.
+    - Fix: Add is_authenticated conditional and redirect user to index page with message if they are not logged in.
+
 ## Code Validation
