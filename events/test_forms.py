@@ -1,14 +1,16 @@
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import timezone
 from datetime import timedelta
 from django.core.files.uploadedfile import SimpleUploadedFile
-from .forms import EventForm, ReviewForm
+from .forms import EventForm, ReviewForm, BookingForm
+from .models import Event, Booking
 # Create your tests here.
 
 
 class TestEventForm(TestCase):
     """
-    Test Case for all Event Form tests.
+    TestCase for all Event Form tests.
     """
 
     def setUp(self):
@@ -175,3 +177,126 @@ class TestReviewForm(TestCase):
         self.assertFalse(form.is_valid(), msg='Form data is valid')
         self.assertIn('rating', form.errors)
         self.assertIn('content', form.errors)
+
+
+class TestBookingForm(TestCase):
+    """
+    TestCase for all Booking Form Tests.
+    """
+    def setUp(self):
+        self.organiser = User.objects.create_user(
+            username='organiser',
+            password='pass'
+            )
+        self.attendee = User.objects.create_user(
+            username='attendee',
+            password='pass'
+        )
+        self.another_attendee = User.objects.create_user(
+            username='another_attendee',
+            password='pass'
+        )
+        self.valid_event = Event.objects.create(
+            event_name='Test Event',
+            event_date=timezone.now() + timedelta(days=5),
+            event_organiser=self.organiser,
+            maximum_attendees=10,
+            is_online=True,
+            url_or_address='Online',
+            short_description='Test Description',
+            long_description='Test Description Long Version'
+        )
+
+    def test_valid_booking_form(self):
+        """
+        Tests if the booking form is valid.
+        """
+        form = BookingForm(
+            data={
+                'tickets': 2
+            },
+            event=self.valid_event,
+            user=self.attendee
+        )
+        self.assertTrue(form.is_valid(), msg='form is not valid')
+
+    def test_booking_own_event_invalid(self):
+        """
+        Tests whether a user can book their own event. Also confirms
+        whether the user receives the error about booking their own events.
+        """
+        form = BookingForm(
+            data={'tickets':1},
+            event=self.valid_event,
+            user=self.organiser
+        )
+        self.assertFalse(form.is_valid(), msg='form is valid')
+        self.assertIn(
+            'You cannot book tickets for your own events.',
+            form.errors['__all__']
+            )
+
+    def test_double_booking_invalid(self):
+        """
+        Tests that users cannot book an event again if an existing booking
+        is already in place. Also confirms whether the user is provided the
+        'already has tickets' error in the form.
+        """
+        Booking.objects.create(
+            event=self.valid_event, ticketholder=self.attendee, tickets=2
+        )
+        form = BookingForm(
+            data={'tickets':1},
+            event=self.valid_event,
+            user=self.attendee
+        )
+        self.assertFalse(form.is_valid(), msg='form is valid')
+        self.assertIn(
+            'You already have tickets to this event.',
+            form.errors['__all__']
+        )
+
+    def test_booking_exceeds_capacity(self):
+        """
+        Tests whether a user can make a booking if there are not enough tickets
+        left to book. Also confirms whether the user receives the
+        not_enough_spaces_error when trying to book like this.
+        """
+        not_enough_spaces_error = (
+            "There are not enough spaces left on the event to book this many "
+            "tickets."
+        )
+        Booking.objects.create(
+            event=self.valid_event,
+            ticketholder=self.another_attendee,
+            tickets=9
+        )
+        form = BookingForm(
+            data={'tickets': 3},
+            event=self.valid_event,
+            user=self.attendee
+        )
+        self.assertFalse(form.is_valid(), msg='form is valid')
+        self.assertIn(
+            not_enough_spaces_error,
+            form.errors['__all__']
+            )
+
+    def test_booking_past_event_invalid(self):
+        """
+        Tests whether the user is able to book a past event. Also tests
+        whether the user receives the error about booking past events.
+        """
+        past_event_error = (
+            'You can not make or change bookings for events that are in the '
+            'past.'
+        )
+        self.valid_event.event_date = timezone.now() - timedelta(days=1)
+        self.valid_event.save()
+        form = BookingForm(
+            data={'tickets': 1},
+            event=self.valid_event,
+            user=self.attendee
+        )
+        self.assertFalse(form.is_valid(), msg='form is valid')
+        self.assertIn(past_event_error, form.errors['__all__'])
