@@ -336,6 +336,8 @@ The project can also be deployed locally. To do so, please follow these instruct
 
 ## Libraries
 
+## Third-Party
+
 - [dj_database_url](https://pypi.org/project/dj-database-url/) - Allows usage of the DATABASE_URL environment variable for providing a django-compatible database definition.
 
 - [django-allauth](https://docs.allauth.org/en/latest/) Integrated authentication applications that assist with registration and management of user accounts.
@@ -354,7 +356,6 @@ The project can also be deployed locally. To do so, please follow these instruct
 
 - [flatpickr](https://flatpickr.js.org/) - Datetime picker that enables localisation of date-time picking for create-event functionality.
 
-## Modules
 
 ### Python
 
@@ -363,6 +364,8 @@ The project can also be deployed locally. To do so, please follow these instruct
 - [os](https://docs.python.org/3/library/os.html) - Miscellaneous operating system interfaces
 
 - [datetime.timedelta](https://docs.python.org/3/library/datetime.html#timedelta-objects) - Used for validation of event creation to make sure users aren't creating events that are too far in the future. 
+
+- [unittest](https://docs.python.org/3/library/unittest.html) - Library for performing unit testing of views and forms.
 
 ### Django
 
