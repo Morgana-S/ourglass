@@ -142,13 +142,12 @@ def event_detail_view(request, event_id):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     user_has_booking = False
+    user_tickets = None
     if request.user.is_authenticated:
         user_booking = event.bookings.filter(ticketholder=request.user).first()
         if user_booking:
             user_has_booking = True
             user_tickets = user_booking.tickets
-        else:
-            user_tickets = None
     user_has_reviewed = False
     if request.user.is_authenticated:
         user_has_reviewed = event.reviews.filter(
