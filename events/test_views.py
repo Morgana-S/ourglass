@@ -199,3 +199,103 @@ class MyEventsDashBoardViewTests(TestCase):
         self.assertNotEqual(response.status_code, 200)
         self.assertRedirects(
             response, f'/accounts/login/?next={reverse("my-events")}')
+
+
+class EventDetailViewTests(TestCase):
+    """
+    TestCase for the event_detail View.
+    """
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='test',
+            password='pass'
+        )
+        self.another_user = User.objects.create_user(
+            username='anotheruser',
+            password='pass'
+        )
+        self.event = Event.objects.create(
+            event_name='Test Event',
+            event_date=timezone.now() + timezone.timedelta(days=3),
+            created_on=timezone.now(),
+            image='test.jpg',
+            event_organiser=self.user,
+            is_online=True,
+            maximum_attendees=100,
+            short_description='Short description',
+            long_description='Long description',
+        )
+        self.url = reverse('event-detail', args=[self.event.id])
+
+    def test_event_detail_view_status_and_template(self):
+        """
+        Tests whether the request is successful and whether the right template
+        is used.
+        """
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'events/event-detail.html')
+
+    def test_event_context_for_user_with_booking(self):
+        """
+        Logs the user in, creates a booking for the event in the user's name,
+        and confirms whether the user has a booking according to the context,
+        as well as confirming how many tickets they have.
+        """
+        self.client.login(username='test', password='pass')
+        Booking.objects.create(
+            event=self.event,
+            ticketholder=self.user,
+            tickets=2
+        )
+        response = self.client.get(self.url)
+        context = response.context
+        self.assertTrue(context['user_has_booking'])
+        self.assertEqual(context['user_tickets'], 2)
+
+    def test_event_context_user_has_reviewed(self):
+        """
+        Logs a user in, creates a review for the event, and then checks to see
+        if the context for whether the user has reviewed the event is passed
+        correctly.
+        """
+        self.client.login(username='anotheruser', password='pass')
+        Review.objects.create(
+            event=self.event,
+            author=self.another_user,
+            rating=4,
+            content='Great event!'
+        )
+        response = self.client.get(self.url)
+        self.assertTrue(response.context['user_has_reviewed'])
+
+    def test_event_context_past_event(self):
+        """
+        Tests whether the past_event context is registering correctly.
+        """
+        self.event.event_date = timezone.now() - timezone.timedelta(days=1)
+        self.event.save()
+        response = self.client.get(self.url)
+        self.assertTrue(response.context['past_event'])
+
+    def test_review_pagination(self):
+        """
+        Creates 15 reviews for the event, then tests whether the pagination
+        is working correctly for the reviews.
+        """
+        for i in range(15):
+            Review.objects.create(
+                event=self.event,
+                author=self.another_user,
+                rating=5,
+                content=f'Review {i}'
+            )
+        response = self.client.get(self.url)
+        reviews = response.context['reviews']
+        self.assertEqual(reviews.paginator.num_pages, 2)
+        self.assertEqual(reviews.paginator.count, 15)
+        self.assertEqual(len(reviews.object_list), 9) 
+        response_page_2 = self.client.get(self.url + '?page=2')
+        reviews_page_2 = response_page_2.context['reviews']
+        self.assertEqual(len(reviews_page_2.object_list), 6)
