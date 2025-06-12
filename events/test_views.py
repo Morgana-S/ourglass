@@ -3,7 +3,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
-from .models import Event
+from .models import Event, Booking, Review
 # Create your tests here.
 
 
@@ -59,3 +59,90 @@ class LatestEventListTests(TestCase):
         events = list(response.context['event_list'])
         for i in range(len(events) - 1):
             self.assertTrue(events[i].created_on >= events[i + 1].created_on)
+
+
+class MyEventsDashBoardViewTests(TestCase):
+    """
+    TestCase for MyEventsDashboardView.
+    """
+
+    def setUp(self):
+        """
+        Creates a user, logs them in, and then creates future and past events
+        with bookings and a review for a past booking.
+        """
+        self.user = User.objects.create_user(
+            username='testuser'
+            password='pass'
+        )
+        self.another_user = User.objects.create_user(
+            username='anothertestuser'
+            password='pass'
+        )
+        self.client.login(username='testuser', password='pass')
+        self.future_event = Event.objects.create(
+            event_name="Future Event",
+            event_date=timezone.now() + timezone.timedelta(days=5),
+            event_organiser=self.user,
+            image='test.jpg',
+            url_or_address='123 Test Street',
+            is_online=False,
+            maximum_attendees=10,
+            short_description="Future short description",
+            long_description="Future long description",
+        )
+        self.past_event = Event.objects.create(
+            event_name="Past Event",
+            event_date=timezone.now() - timezone.timedelta(days=5),
+            event_organiser=self.user,
+            image='test.jpg',
+            url_or_address='123 Test Street',
+            is_online=False,
+            maximum_attendees=10,
+            short_description="Past short description",
+            long_description="Past long description",
+        )
+        self.other_future_event = Event.objects.create(
+            event_name="Future Event",
+            event_date=timezone.now() + timezone.timedelta(days=5),
+            event_organiser=self.another_user,
+            image='test.jpg',
+            url_or_address='123 Test Street',
+            is_online=False,
+            maximum_attendees=10,
+            short_description="Future short description",
+            long_description="Future long description",
+        )
+        self.other_past_event = Event.objects.create(
+            event_name="Past Event",
+            event_date=timezone.now() - timezone.timedelta(days=5),
+            event_organiser=self.another_user,
+            image='test.jpg',
+            url_or_address='123 Test Street',
+            is_online=False,
+            maximum_attendees=10,
+            short_description="Past short description",
+            long_description="Past long description",
+        )
+        self.future_booking = Booking.objects.create(
+            event=self.other_future_event,
+            ticketholder=self.user,
+            tickets=1
+        )
+        self.past_booking = Booking.objects.create(
+            event=self.other_past_event,
+            ticketholder=self.user,
+            tickets=2
+        )
+        self.review = Review.objects.create(
+            event=self.other_past_event,
+            author=self.user,
+            rating=5,
+            content="A really good event, very insightful!",
+            approved=True
+        )
+
+    def test_dashboard_view_status_and_template(self):
+        response = self.client.get(reverse('my-events'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'events/my-events.html')
