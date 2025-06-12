@@ -309,6 +309,7 @@ def delete_event_view(request, event_id):
         )
         return redirect('index')
 
+
 def review_event_view(request, event_id):
     """
     View for creating a review for an event. Passes the ReviewForm to the
