@@ -69,14 +69,15 @@ class MyEventsDashBoardViewTests(TestCase):
     def setUp(self):
         """
         Creates a user, logs them in, and then creates future and past events
-        with bookings and a review for a past booking.
+        organised by both the user and another user, as well as a review
+        for a past event.
         """
         self.user = User.objects.create_user(
-            username='testuser'
+            username='testuser',
             password='pass'
         )
         self.another_user = User.objects.create_user(
-            username='anothertestuser'
+            username='anothertestuser',
             password='pass'
         )
         self.client.login(username='testuser', password='pass')
@@ -143,6 +144,58 @@ class MyEventsDashBoardViewTests(TestCase):
         )
 
     def test_dashboard_view_status_and_template(self):
+        """
+        Tests whether the request is successful and whether the right template
+        is used.
+        """
         response = self.client.get(reverse('my-events'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'events/my-events.html')
+
+    def test_dashboard_context_includes_future_booking(self):
+        """
+        Tests whether a future booking appears in the context for the view.
+        """
+        response = self.client.get(reverse('my-events'))
+        bookings = response.context['bookings'].object_list
+        self.assertIn(self.future_booking, bookings)
+
+    def test_dashboard_context_includes_previous_bookings(self):
+        """
+        Tests whether a previous booking appears in the context for the view.
+        """
+        response = self.client.get(reverse('my-events'))
+        previous = response.context['previous_bookings'].object_list
+        self.assertIn(self.past_booking, previous)
+
+    def test_dashboard_context_includes_organised_events(self):
+        """
+        Tests whether the context includes events organised by the user.
+        """
+        response = self.client.get(reverse('my-events'))
+        organised = response.context['organised_events'].object_list
+        self.assertIn(self.future_event, organised)
+
+    def test_dashboard_previous_bookings_has_review_annotation(self):
+        """
+        Tests whether a previous booking that has been reviewed is annotated
+        to show that it has been reviewed.
+        """
+        response = self.client.get(reverse('my-events'))
+        previous = response.context['previous_bookings'].object_list
+        booking_with_review = next(
+            (b for b in previous if b.id == self.past_booking.id), None)
+        self.assertIsNotNone(booking_with_review)
+        self.assertTrue(hasattr(booking_with_review, 'has_review'))
+        self.assertTrue(booking_with_review.has_review)
+
+    def test_redirect_if_not_logged_in(self):
+        """
+        Tests if an anonymous user is redirected to the account page when not
+        logged in.
+        """
+        self.client.logout()
+        response = self.client.get(reverse('my-events'))
+        self.assertNotEqual(response.status_code, 200)
+        self.assertRedirects(
+            response, f'/accounts/login/?next={reverse("my-events")}')
