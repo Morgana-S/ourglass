@@ -4,7 +4,9 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
+from unittest.mock import patch
 from .models import Event, Booking, Review
+from .forms import EventForm
 # Create your tests here.
 
 
@@ -344,3 +346,99 @@ class TestLogoutView(TestCase):
             "You have been logged out." in str(m) for m in messages
         )
         )
+
+
+class TestCreateEventView(TestCase):
+    """
+    TestCase for the create_event View.
+    """
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='test',
+            password='pass'
+        )
+        self.url = reverse('create-event')
+
+    def test_get_create_event_view_status_and_template(self):
+        """
+        Logs the user in, then tests the request goes through
+        okay and that the correct template is used.
+        """
+        self.client.login(username='test', password='pass')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'events/create-event.html')
+        self.assertIsInstance(response.context['form'], EventForm)
+
+    @patch('cloudinary.uploader.upload')
+    def test_post_creates_valid_event(self, mock_upload):
+        """
+        Logs the user in, creates a mock upload for the CloudinaryField image,
+        then confirms that the form redirects to the my-events page,
+        checks that the new event exists, and confirms whether
+        the user receives a message about the event being created.
+        """
+        self.client.login(username='test', password='pass')
+        mock_upload.return_value = {
+            'url': 'http://res.cloudinary.com/fake-image.jpg',
+            'public_id': 'fake-id',
+            'version': 1,
+            'type': 'upload',
+            'format': 'jpg',
+            'resource_type': 'image',
+        }
+        image = SimpleUploadedFile(
+            name='test.jpg',
+            content=b'test',
+            content_type='image/jpeg'
+        )
+        form_data = {
+            'event_name': 'Test Event',
+            'event_date': (
+                timezone.now() + timezone.timedelta(days=5)
+                ).strftime(
+                '%Y-%m-%d %H:%M:%S'
+            ),
+            'event_organiser': self.user,
+            'image': image,
+            'url_or_address': '123 Test Street',
+            'is_online': False,
+            'maximum_attendees': 10,
+            'short_description': 'Test short description',
+            'long_description': 'Test long description',
+        }
+        response = self.client.post(self.url, form_data, follow=True)
+        self.assertRedirects(response, reverse('my-events'))
+        self.assertTrue(Event.objects.filter(event_name='Test Event').exists())
+        messages = list(response.context['messages'])
+        self.assertIn('Congratulations', str(messages[0]))
+
+    def test_post_invalid_data_shows_error(self):
+        """
+        Tests whether the response status is correct if the user posts a form
+        with invalid data, and that the error appears in the form. Also
+        ensures the user gets a message advising them that the event was not
+        created.
+        """
+        self.client.login(username='test', password='pass')
+        invalid_data = {
+            'event_name': '',
+        }
+        response = self.client.post(self.url, invalid_data)
+        form = response.context['form']
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(form, 'event_name', 'This field is required.')
+        messages = list(response.context['messages'])
+        self.assertIn('Your event was not created', str(messages[0]))
+
+    def test_unauthenticated_user_redirected(self):
+        """
+        Tests whether an anonymous user gets redirected to the index page,
+        and whether they receive a message indicating they are not currently
+        logged in.
+        """
+        response = self.client.get(self.url, follow=True)
+        self.assertRedirects(response, reverse('index'))
+        messages = list(response.context['messages'])
+        self.assertIn('not currently logged in', str(messages[0]))
