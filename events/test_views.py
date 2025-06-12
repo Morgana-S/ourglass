@@ -958,3 +958,107 @@ def test_invalid_post_shows_error(self):
     messages = list(get_messages(response.wsgi_request))
     self.assertIn('Review was unable to be updated.',
                   [m.message for m in messages])
+
+
+class TestDeleteReviewView(TestCase):
+    """
+    TestCase for the delete_review View.
+    """
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='test',
+            password='pass'
+        )
+        self.other_user = User.objects.create_user(
+            username='other',
+            password='pass'
+        )
+        self.event = Event.objects.create(
+            event_name='Test Event',
+            event_date=timezone.now() - timezone.timedelta(days=3),
+            created_on=timezone.now(),
+            image='test.jpg',
+            event_organiser=self.other_user,
+            is_online=True,
+            maximum_attendees=100,
+            short_description='Short description',
+            long_description='Long description',
+        )
+        self.review = Review.objects.create(
+            event=self.event,
+            author=self.user,
+            rating=4,
+            content='This was a great event with lots of fun! Test test test',
+            approved=True
+        )
+        self.url = reverse('delete-review', args=[self.review.id])
+
+    def test_author_can_delete_review(self):
+        """
+        Logs the user in, then attempts to delete the review. Checks that the
+        user is redirected to the event-detail page, that the review
+        no longer exists, and that the user gets a message confirming the
+        review has been deleted.
+        """
+        self.client.login(username='test', password='pass')
+        response = self.client.post(self.url, follow=True)
+        self.assertRedirects(
+            response,
+            reverse('event-detail', args=[self.event.id])
+        )
+        self.assertFalse(Review.objects.filter(id=self.review.id).exists())
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn('Your review has now been deleted.',
+                      [msg.message for msg in messages])
+
+    def test_non_author_cannot_delete_review(self):
+        """
+        Logs another user in, then attempts to delete the review. Checks that 
+        the user is redirected back to the event-detail page, that the review
+        still exists, and that the user gets an error message.
+        """
+        self.client.login(username='other', password='pass')
+        response = self.client.post(self.url, follow=True)
+        self.assertTrue(Review.objects.filter(id=self.review.id).exists())
+        self.assertRedirects(
+            response,
+            reverse('event-detail', args=[self.event.id])
+        )
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn(
+            "You can not delete other people's reviews.",
+            [msg.message for msg in messages]
+        )
+
+    def test_anonymous_user_redirected(self):
+        """
+        Does not log the user in, and then attempts to delete the review.
+        Checks that the review still exists and that the user is redirected
+        to the index page, with a message saying you can't delete a review
+        if not logged in.
+        """
+        response = self.client.post(self.url, follow=True)
+        self.assertTrue(Review.objects.filter(id=self.review.id).exists())
+        self.assertRedirects(response, reverse('index'))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn(
+            'You can not delete a review if you are not logged in.',
+            str(messages[0])
+        )
+
+    def test_get_request_does_not_delete(self):
+        """
+        Tests that a GET response does not delete the review. Should redirect
+        user to the index page and advise them of an invalid request through
+        message.
+        """
+        self.client.login(username='test', password='pass')
+        # not accessed directly but still called to check the GET request
+        response = self.client.get(self.url, follow=True)
+        self.assertTrue(Review.objects.filter(id=self.review.id).exists())
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn(
+            'Invalid request type (GET). Please contact the site',
+            str(messages[0])
+        )
