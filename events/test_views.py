@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.utils import timezone
 from unittest.mock import patch
 from .models import Event, Booking, Review
-from .forms import EventForm
+from .forms import EventForm, ReviewForm
 # Create your tests here.
 
 
@@ -659,3 +659,163 @@ class TestDeleteEventView(TestCase):
             'You cannot delete an event as you are not currently logged in.',
             str(messages[0])
         )
+
+
+class TestReviewEventView(TestCase):
+    """
+    TestCase for the review_event View.
+    """
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='test',
+            password='pass'
+        )
+        self.other_user = User.objects.create_user(
+            username='other',
+            password='pass'
+        )
+        self.event = Event.objects.create(
+            event_name='Test Event',
+            event_date=timezone.now() - timezone.timedelta(days=3),
+            created_on=timezone.now(),
+            image='test.jpg',
+            event_organiser=self.other_user,
+            is_online=True,
+            maximum_attendees=100,
+            short_description='Short description',
+            long_description='Long description',
+        )
+        self.url = reverse('review-event', args=[self.event.id])
+
+    def test_get_review_form_authenticated_user(self):
+        """
+        Logs the user in, creates a booking for the event and checks if the
+        user is then able to access the review-event view.
+        """
+        self.client.login(username='test', password='pass')
+        Booking.objects.create(
+            event=self.event,
+            ticketholder=self.user,
+            tickets=2)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'events/review-event.html')
+        self.assertIsInstance(response.context['form'], ReviewForm)
+
+    def test_review_submission_by_eligible_user(self):
+        """
+        Logs the user in, creates a booking for the event, posts a review
+        and checks to see if the user is redirected to the event-detail page,
+        Checks the number of reviews increase to 1, and confirms the review
+        details match those of the user. Also confirms the user receives a
+        message advising them the review has been submitted.
+        """
+        self.client.login(username='test', password='pass')
+        Booking.objects.create(
+            event=self.event,
+            ticketholder=self.user,
+            tickets=2)
+        post_data = {
+            'rating': 5,
+            'content': 'Amazing event! Would love to come to the next one!!'
+        }
+        response = self.client.post(self.url, post_data, follow=True)
+        self.assertRedirects(
+            response,
+            reverse('event-detail', args=[self.event.id])
+        )
+        self.assertEqual(Review.objects.count(), 1)
+        review = Review.objects.first()
+        self.assertEqual(review.event, self.event)
+        self.assertEqual(review.author, self.user)
+        self.assertFalse(review.approved)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn('Thank you, your review has now been sent',
+                      str(messages[0]))
+
+    def test_review_blocked_if_already_reviewed(self):
+        """
+        Logs the user in, creates a booking for the event and a review to act
+        as an existing review. Then tries to create another review and checks
+        to make sure the review doesn't go through, and that the user receives
+        a message advising them that the new review was unsuccessful.
+        """
+        self.client.login(username='test', password='pass')
+        Booking.objects.create(
+            event=self.event,
+            ticketholder=self.user,
+            tickets=2)
+        Review.objects.create(
+            event=self.event,
+            author=self.user,
+            rating=4,
+            content='Old review for the same event, test test test test test',
+            approved=True)
+        post_data = {
+            'rating': 5,
+            'content': 'Duplicate attempt at review, test test test test test'
+        }
+        response = self.client.post(self.url, post_data, follow=True)
+        self.assertRedirects(response, reverse(
+            'event-detail', args=[self.event.id]))
+        self.assertEqual(Review.objects.count(), 1)  # still only the old one
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn('you cannot leave a review for this event',
+                      str(messages[0]))
+
+    def test_review_blocked_if_user_has_no_booking(self):
+        """
+        Logs the user in, but does not create a booking for the user. Then
+        tries to post a review to the event - checks if the user is redirected,
+        whether the review count increases, and that the user receives a
+        message advising them the review didn't work.
+        """
+        self.client.login(username='test', password='pass')
+        post_data = {
+            'rating': 5,
+            'content': 'Trying without booking, test test test test test test'
+        }
+        response = self.client.post(self.url, post_data, follow=True)
+        self.assertRedirects(response, reverse(
+            'event-detail', args=[self.event.id]))
+        self.assertEqual(Review.objects.count(), 0)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn('you cannot leave a review for this event',
+                      str(messages[0]))
+
+    def test_review_form_invalid_data(self):
+        """
+        Logs the user in and creates a booking for them, then attempts
+        to post a review without any content or rating. Checks that the user
+        is redirected and receives a message advising them the review
+        was unsuccessful.
+        """
+        self.client.login(username='test', password='pass')
+        Booking.objects.create(
+            event=self.event,
+            ticketholder=self.user,
+            tickets=2)
+        post_data = {'rating': '', 'content': ''}
+        response = self.client.post(self.url, post_data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'events/review-event.html')
+        # single quote in the below assert escaped
+        self.assertContains(
+            response, "Sorry, your review wasn&#x27;t able to be submitted")
+        self.assertEqual(Review.objects.count(), 0)
+
+
+def test_redirects_if_user_not_logged_in(self):
+    """
+    Keeps the user anonymous, then attempts to navigate to the view for leaving
+    a review. Checks to see if the user is redirected to the index page, and
+    receives a message advising that they can't leave a review.
+    """
+    response = self.client.get(self.url, follow=True)
+    self.assertRedirects(response, reverse('index'))
+    messages = list(get_messages(response.wsgi_request))
+    self.assertIn(
+        'You cannot review an event as you are not currently logged in',
+        str(messages[0])
+    )
