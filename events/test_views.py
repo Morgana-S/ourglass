@@ -819,3 +819,142 @@ def test_redirects_if_user_not_logged_in(self):
         'You cannot review an event as you are not currently logged in',
         str(messages[0])
     )
+
+
+class TestEditReviewView(TestCase):
+    """
+    TestCase for edit_review View.
+    """
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='test',
+            password='pass'
+        )
+        self.other_user = User.objects.create_user(
+            username='other',
+            password='pass'
+        )
+        self.event = Event.objects.create(
+            event_name='Test Event',
+            event_date=timezone.now() - timezone.timedelta(days=3),
+            created_on=timezone.now(),
+            image='test.jpg',
+            event_organiser=self.other_user,
+            is_online=True,
+            maximum_attendees=100,
+            short_description='Short description',
+            long_description='Long description',
+        )
+        self.review = Review.objects.create(
+            event=self.event,
+            author=self.user,
+            rating=4,
+            content='This was a great event with lots of fun! Test test test',
+            approved=True
+        )
+        self.url = reverse('edit-review', args=[self.review.id])
+
+    def test_redirects_unauthenticated_user(self):
+        """
+        Attempts to access the review url as an anonymous user. Checks that
+        the user is redirected to the index page and receives the not logged
+        in error.
+        """
+        response = self.client.get(self.url)
+        self.assertRedirects(response, reverse('index'))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn(
+            'You cannot edit a review as you are not currently logged in',
+            str(messages[0])
+        )
+
+    def test_authenticated_non_author_redirected(self):
+        """
+        Logs another user in, then attempts to edit the original user's review.
+        Checks that the user is redirected to the event-detail page and is
+        shown a message about not being able to update the review.
+        """
+        self.client.login(username='other', password='pass')
+        response = self.client.post(self.url, {
+            'rating': 5,
+            'content': 'Trying to edit someone else\'s review.'
+        })
+        self.assertRedirects(response, reverse(
+            'event-detail', args=[self.event.id]))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn(
+            'Review was unable to be updated.',
+            [m.message for m in messages]
+        )
+
+    def test_author_get_request_renders_form(self):
+        """
+        Logs the user in, then tests that they can get the edit-review view,
+        that it uses the right template, and that the form context is passed
+        to the template. Also checks that the form instance matches the
+        existing review.
+        """
+        self.client.login(username='test', password='pass')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'events/edit-review.html')
+        self.assertIsInstance(response.context['form'], ReviewForm)
+        self.assertEqual(response.context['form'].instance, self.review)
+
+
+def test_valid_post_by_author_updates_review(self):
+    """
+    Logs the user in, then updates the review and posts it. Checks that the
+    rating is updated, the review content is updated, and that the review
+    is now no longer approved. Also checks the messages to ensure the user
+    receives a succcess message.
+    """
+    self.client.login(username='test', password='pass')
+    response = self.client.post(
+        self.url,
+        {
+            'rating': 3,
+            'content': 'Long text content review test test test test test test'
+        }
+    )
+    self.assertRedirects(
+        response,
+        reverse('event-detail', args=[self.event.id])
+    )
+    self.review.refresh_from_db()
+    self.assertEqual(self.review.rating, 3)
+    self.assertEqual(
+        self.review.content,
+        'Long text content review test test test test test test'
+    )
+    self.assertFalse(self.review.approved)
+    messages = list(get_messages(response.wsgi_request))
+    self.assertIn(
+        'Your updated review is now awaiting approval.',
+        [m.message for m in messages]
+    )
+
+
+def test_invalid_post_shows_error(self):
+    """
+    Logs the user in, then attempts to update the review with invalid rating
+    and content. Checks that the user is redirected back to the event-detail
+    page, that the review hasn't been updated, and that the user was informed
+    in the messages that the review couldn't be updated.
+    """
+    self.client.login(username='test', password='pass')
+    response = self.client.post(
+        self.url,
+        {
+            'rating': '',
+            'content': 'Too short'
+        }
+    )
+    self.assertRedirects(response, reverse(
+        'event-detail', args=[self.event.id]))
+    self.review.refresh_from_db()
+    self.assertNotEqual(self.review.content, 'Too short')
+    messages = list(get_messages(response.wsgi_request))
+    self.assertIn('Review was unable to be updated.',
+                  [m.message for m in messages])
