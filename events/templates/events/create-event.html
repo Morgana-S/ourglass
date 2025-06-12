@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load widget_tweaks %}
 {% block content %}
 <!-- Create Event Section -->
 <section id="create-event">
@@ -20,11 +19,7 @@
                 {% for field in form %}
                 <div class="mb-3">
                     <label for="{{ field.id_for_label }}" class="form-label">{{field.label}}</label>
-                    {% if field.field.widget.input_type == 'checkbox' %}
-                    {{ field|add_class:"form-check-input" }}
-                    {% else %}
-                    {{ field|add_class:"form-control" }}
-                    {% endif %}
+                    {{ field }}
                     {% if field.help_text %}
                     <div class="form-text">{{ field.help_text }}</div>
                     {% endif %}
