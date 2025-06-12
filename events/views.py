@@ -466,9 +466,9 @@ def all_events_view(request):
     if request.user.is_authenticated:
         events = Event.objects.exclude(
             event_organiser=request.user
-            ).filter(
-                event_date__gte=now()
-            ).order_by(
+        ).filter(
+            event_date__gte=now()
+        ).order_by(
             'event_date'
         )
 
