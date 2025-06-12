@@ -365,7 +365,7 @@ The project can also be deployed locally. To do so, please follow these instruct
 
 - [datetime.timedelta](https://docs.python.org/3/library/datetime.html#timedelta-objects) - Used for validation of event creation to make sure users aren't creating events that are too far in the future. 
 
-- [unittest](https://docs.python.org/3/library/unittest.html) - Library for performing unit testing of views and forms.
+- [unittest](https://docs.python.org/3/library/unittest.html) - Library for performing unit testing of views and forms. Used through django.test by importing TestCase.
 
 ### Django
 
