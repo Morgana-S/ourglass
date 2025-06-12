@@ -1014,7 +1014,7 @@ class TestDeleteReviewView(TestCase):
 
     def test_non_author_cannot_delete_review(self):
         """
-        Logs another user in, then attempts to delete the review. Checks that 
+        Logs another user in, then attempts to delete the review. Checks that
         the user is redirected back to the event-detail page, that the review
         still exists, and that the user gets an error message.
         """
@@ -1062,3 +1062,95 @@ class TestDeleteReviewView(TestCase):
             'Invalid request type (GET). Please contact the site',
             str(messages[0])
         )
+
+
+class TestAllEventsView(TestCase):
+    """
+    TestCase for all_events View.
+    """
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='test',
+            password='pass'
+        )
+        self.organiser = User.objects.create_user(
+            username='organiser',
+            password='pass'
+        )
+        # creates 12 events to populate the view
+        for i in range(12):
+            Event.objects.create(
+                event_name=f'Test Event{i}',
+                event_date=timezone.now() + timezone.timedelta(days=3+i),
+                created_on=timezone.now(),
+                image='test.jpg',
+                event_organiser=self.organiser,
+                is_online=True,
+                maximum_attendees=100,
+                short_description='Short description',
+                long_description='Long description',
+            )
+        self.own_event = Event.objects.create(
+            event_name='Test Event for user',
+            event_date=timezone.now() + timezone.timedelta(days=3),
+            created_on=timezone.now(),
+            image='test.jpg',
+            event_organiser=self.user,
+            is_online=True,
+            maximum_attendees=100,
+            short_description='Short description',
+            long_description='Long description',
+        )
+        self.url = reverse('all-events')
+
+    def test_redirects_if_not_logged_in(self):
+        """
+        Does not log the user in and attempts to get all events view. Should
+        redirect to the index page and provide a message advising user can't
+        view events unless they're logged in.
+        """
+        not_logged_in_error = (
+            'You can not view events until you are logged in. '
+            'Please sign up for an account or log in using the log in page.'
+        )
+        response = self.client.get(self.url, follow=True)
+        self.assertRedirects(response, reverse('index'))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn(
+            not_logged_in_error,
+            [m.message for m in messages]
+        )
+
+    def test_shows_only_future_events_not_created_by_user(self):
+        """
+        Logs the user in, then calls the list of all events and checks
+        that the user's own events aren't included in the context. Also
+        checks that all events are in the future.
+        """
+        self.client.login(username='test', password='pass')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'events/all-events.html')
+        events = response.context['events']
+        for event in events:
+            self.assertNotEqual(event.event_organiser, self.user)
+            self.assertGreaterEqual(event.event_date, timezone.now())
+
+    def test_pagination(self):
+        """
+        Tests that the pagination works for the list of events. Logs the
+        user in and then navigates to the event page, checks that page 1
+        only has 9 events, and that it has an option to go to the next page.
+        Checks the next page has less than 9 events (only 12 are generated)
+        and that there's an option to go back to the previous page.
+        """
+        self.client.login(username='test', password='pass')
+        response = self.client.get(self.url)
+        events_page_1 = response.context['events']
+        self.assertEqual(len(events_page_1), 9)
+        self.assertTrue(events_page_1.has_next())
+        response = self.client.get(self.url + '?page=2')
+        events_page_2 = response.context['events']
+        self.assertLessEqual(len(events_page_2), 9)
+        self.assertTrue(events_page_2.has_previous())
