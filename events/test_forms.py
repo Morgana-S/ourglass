@@ -46,7 +46,7 @@ class TestEventForm(TestCase):
 
     def test_event_date_in_past(self):
         """
-        Tests if an event date is in the past. Also confirms that there 
+        Tests if an event date is in the past. Also confirms that there
         are errors in the form if the data is incorrect.
         """
         data = self.form_data.copy()
@@ -170,7 +170,7 @@ class TestReviewForm(TestCase):
 
     def test_review_missing_fields(self):
         """
-        Tests if the form is missing fields. Also confirms if there are 
+        Tests if the form is missing fields. Also confirms if there are
         errors in the form fields when submitted.
         """
         form = ReviewForm(data=self.missing_data)
@@ -226,7 +226,7 @@ class TestBookingForm(TestCase):
         whether the user receives the error about booking their own events.
         """
         form = BookingForm(
-            data={'tickets':1},
+            data={'tickets': 1},
             event=self.valid_event,
             user=self.organiser
         )
@@ -246,7 +246,7 @@ class TestBookingForm(TestCase):
             event=self.valid_event, ticketholder=self.attendee, tickets=2
         )
         form = BookingForm(
-            data={'tickets':1},
+            data={'tickets': 1},
             event=self.valid_event,
             user=self.attendee
         )
