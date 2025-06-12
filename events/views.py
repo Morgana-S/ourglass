@@ -586,6 +586,9 @@ def booking_tickets_view(request, event_id):
     event = get_object_or_404(Event, id=event_id)
 
     if request.user.is_authenticated:
+        if event.event_organiser == request.user:
+            messages.error(request, 'You cannot book your own event.')
+            return redirect('event-detail', event_id=event.id)
         if request.method == 'POST':
             success_message = (
                 'Congratulations, your tickets are now booked.'
