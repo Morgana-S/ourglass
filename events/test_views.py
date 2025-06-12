@@ -546,7 +546,7 @@ class TestEditEventView(TestCase):
 
     def test_unauthenticated_user_redirected(self):
         """
-        Does not log the user in, attempts to load the edit-event page. 
+        Does not log the user in, attempts to load the edit-event page.
         Checks if the user is redirected to the index page and that
         they receive a message about not being logged in.
         """
@@ -583,3 +583,78 @@ class TestEditEventView(TestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertIn('Your event was not updated successfully.',
                       str(messages[0]))
+
+
+class TestDeleteEventView(TestCase):
+    """
+    TestCase for the delete_event view.
+    """
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='test',
+            password='pass',
+        )
+        self.other_user = User.objects.create_user(
+            username='other',
+            password='pass',
+        )
+        self.event = Event.objects.create(
+            event_name='Test Event',
+            event_date=timezone.now() + timezone.timedelta(days=3),
+            created_on=timezone.now(),
+            image='test.jpg',
+            event_organiser=self.user,
+            is_online=True,
+            maximum_attendees=100,
+            short_description='Short description',
+            long_description='Long description',
+        )
+        self.url = reverse('delete-event', args=[self.event.id])
+
+    def test_event_deleted_by_organiser(self):
+        """
+        Logs the user in, posts the delete url for the event, then checks
+        the user is redirected to the my-events page, whether the event still
+        exists, and that the user received a message about the event being
+        deleted.
+        """
+        self.client.login(username='test', password='pass')
+        response = self.client.post(self.url, follow=True)
+        self.assertRedirects(response, reverse('my-events'))
+        self.assertFalse(Event.objects.filter(id=self.event.id).exists())
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn('This event has now been deleted.', str(messages[0]))
+
+    def test_event_not_deleted_by_other_user(self):
+        """
+        Logs a different user in than the event organiser, attempts to delete
+        the event. Confirms that the user is redirected to the event-detail
+        page and that they receive a message indicating they don't have
+        permission to delete the event.
+        """
+        self.client.login(username='other', password='pass')
+        response = self.client.post(self.url, follow=True)
+        self.assertRedirects(response, reverse(
+            'event-detail', args=[self.event.id]))
+        self.assertTrue(Event.objects.filter(id=self.event.id).exists())
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn(
+            'You do not have permission to delete this event.',
+            str(messages[0])
+        )
+
+    def test_event_not_deleted_by_unauthenticated_user(self):
+        """
+        Tests that anonymous users who try to delete events
+        are directed back to the index page, with a message about them
+        not being logged in.
+        """
+        response = self.client.post(self.url, follow=True)
+        self.assertRedirects(response, reverse('index'))
+        self.assertTrue(Event.objects.filter(id=self.event.id).exists())
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn(
+            'You cannot delete an event as you are not currently logged in.',
+            str(messages[0])
+        )
