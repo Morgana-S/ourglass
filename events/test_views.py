@@ -397,7 +397,7 @@ class TestCreateEventView(TestCase):
             'event_name': 'Test Event',
             'event_date': (
                 timezone.now() + timezone.timedelta(days=5)
-                ).strftime(
+            ).strftime(
                 '%Y-%m-%d %H:%M:%S'
             ),
             'event_organiser': self.user,
@@ -442,3 +442,144 @@ class TestCreateEventView(TestCase):
         self.assertRedirects(response, reverse('index'))
         messages = list(response.context['messages'])
         self.assertIn('not currently logged in', str(messages[0]))
+
+
+class TestEditEventView(TestCase):
+    """
+    TestCase for edit_event View.
+    """
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='test',
+            password='pass',
+        )
+        self.event = Event.objects.create(
+            event_name='Test Event',
+            event_date=timezone.now() + timezone.timedelta(days=3),
+            created_on=timezone.now(),
+            image='test.jpg',
+            event_organiser=self.user,
+            is_online=True,
+            maximum_attendees=100,
+            short_description='Short description',
+            long_description='Long description',
+        )
+        self.url = reverse('edit-event', args=[self.event.id])
+
+    def test_get_edit_event_form(self):
+        """
+        Logs the user in, then attempts to get the edit-event form for the
+        above event. Checks if the get request goes through properly,
+        the right template is used, the form is passed to the context
+        and that the form for the instance is for this event.
+        """
+        self.client.login(username='test', password='pass')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'events/edit-event.html')
+        self.assertIn('form', response.context)
+        self.assertEqual(response.context['form'].instance, self.event)
+
+    def test_post_valid_data_updates_event(self):
+        """
+        Logs the user in, attempts to post new form data to the database for
+        the existing event, and then checks if the event instance has been
+        updated with new form data. Also checks that the user has been
+        informed that the event is updated.
+        """
+        self.client.login(username='test', password='pass')
+        new_name = 'Updated Event Name'
+        response = self.client.post(
+            self.url,
+            {
+                'event_name': new_name,
+                'event_date': (
+                    timezone.now() + timezone.timedelta(days=5)
+                ).strftime(
+                    '%Y-%m-%d %H:%M:%S'
+                ),
+                'image': 'test.jpg',
+                'url_or_address': 'New Address',
+                'is_online': False,
+                'maximum_attendees': 20,
+                'short_description': 'Updated short',
+                'long_description': 'Updated long',
+            },
+            follow=True
+        )
+        self.event.refresh_from_db()
+        self.assertEqual(self.event.event_name, new_name)
+        self.assertRedirects(response, reverse(
+            'event-detail', args=[self.event.id]))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn('Your event has now been updated.', str(messages[0]))
+
+    def test_post_invalid_data_shows_error(self):
+        """
+        Logs the user in, tries to post data that would be invalid to the form,
+        checks if the response code is a get request, checks the template is
+        provided to the view, and that the form has been updated with the
+        required fields, and that the user receives a message advising that
+        their event was not updated successfully.
+        """
+        self.client.login(username='test', password='pass')
+        response = self.client.post(
+            self.url,
+            {
+                'event_name': '',
+            },
+            follow=True
+        )
+        form = response.context['form']
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'events/edit-event.html')
+        self.assertFormError(
+            form,
+            'event_name',
+            'This field is required.')
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn(
+            'Your event was not updated successfully.',
+            str(messages[0])
+        )
+
+    def test_unauthenticated_user_redirected(self):
+        """
+        Does not log the user in, attempts to load the edit-event page. 
+        Checks if the user is redirected to the index page and that
+        they receive a message about not being logged in.
+        """
+        response = self.client.get(self.url, follow=True)
+        self.assertRedirects(response, reverse('index'))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn(
+            'You cannot edit an event as you are not currently logged in.',
+            str(messages[0])
+        )
+
+    def test_user_cannot_edit_other_users_event(self):
+        """
+        Creates a new user, logs in as that user and attempts to
+        post new data to the view with the event name edited. Then
+        obtains data from the database and confirms that the event wasn't
+        updated. Also confirms to the user that the event wasn't updated.
+        """
+        other_user = User.objects.create_user(
+            username='other',
+            password='pass'
+        )
+        self.client.login(username='other', password='pass')
+        response = self.client.post(
+            self.url,
+            {
+                'event_name': 'new event name'
+            },
+            follow=True
+        )
+        self.event.refresh_from_db()
+        self.assertNotEqual(self.event.event_name, 'new event name')
+        self.assertEqual(response.status_code, 200)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn('Your event was not updated successfully.',
+                      str(messages[0]))
