@@ -19,10 +19,32 @@ class EventForm(forms.ModelForm):
             'long_description',
         ]
         widgets = {
+            'event_name': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'Enter Event Name'
+                }
+            ),
             'event_date': forms.DateTimeInput(
                 attrs={
                     'class': 'form-control flatpickr',
                     'placeholder': 'Select date and time'
+                }
+            ),
+            'image': forms.ClearableFileInput(
+                attrs={
+                    'class': 'form-control',
+                    'accept': 'image/*'
+                }
+            ),
+            'is_online': forms.CheckboxInput(
+                attrs={
+                    'class': 'form-check-input'
+                }
+            ),
+            'url_or_address': forms.TextInput(
+                attrs={
+                    'class': 'form-control'
                 }
             ),
             'maximum_attendees': forms.NumberInput(
@@ -32,6 +54,11 @@ class EventForm(forms.ModelForm):
                     'max': 200,
                     'step': 1,
                     'placeholder': 'Enter a number between 1 - 200'
+                }
+            ),
+            'short_description': forms.TextInput(
+                attrs={
+                    'class': 'form-control'
                 }
             ),
             'long_description': SummernoteWidget(),
