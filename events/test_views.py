@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.contrib.messages import get_messages
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
@@ -299,3 +300,41 @@ class EventDetailViewTests(TestCase):
         response_page_2 = self.client.get(self.url + '?page=2')
         reviews_page_2 = response_page_2.context['reviews']
         self.assertEqual(len(reviews_page_2.object_list), 6)
+
+
+class TestLogoutView(TestCase):
+    """
+    TestCase for the logout View.
+    """
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='test',
+            password='pass'
+        )
+        self.logout_url = reverse('logout')
+        self.index_url = reverse('index')
+        self.event = Event.objects.create(
+            event_name="Test Event",
+            event_date=timezone.now() + timezone.timedelta(days=5),
+            event_organiser=self.user,
+            image='test.jpg',
+            url_or_address='123 Test Street',
+            is_online=False,
+            maximum_attendees=10,
+            short_description="Test short description",
+            long_description="Test long description",
+        )
+
+    def test_logs_user_out_and_redirects(self):
+        self.client.login(username='test', password='pass')
+        response = self.client.get(self.index_url)
+        self.assertTrue(response.wsgi_request.user.is_authenticated)
+        response = self.client.get(self.logout_url, follow=True)
+        self.assertFalse(response.wsgi_request.user.is_authenticated)
+        self.assertRedirects(response, self.index_url)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertTrue(any(
+            "You have been logged out." in str(m) for m in messages
+        )
+        )
