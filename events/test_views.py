@@ -565,6 +565,7 @@ class TestEditEventView(TestCase):
         obtains data from the database and confirms that the event wasn't
         updated. Also confirms to the user that the event wasn't updated.
         """
+        # not accessed directly, but used in the login
         other_user = User.objects.create_user(
             username='other',
             password='pass'
