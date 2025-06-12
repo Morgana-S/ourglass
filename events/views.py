@@ -444,14 +444,31 @@ def delete_review_view(request, review_id):
     Validation exists to ensure that only the reviewer can delete their review.
     """
     review = get_object_or_404(Review, id=review_id)
-
-    if review.author != request.user:
-        messages.error(request, "You can not delete other people's reviews.")
-        return redirect('event-detail', event_id=review.event.id)
+    not_logged_in_error = (
+        'You can not delete a review if you are not logged in.'
+    )
+    get_request_error = (
+        'Invalid request type (GET). Please contact the site administrators '
+        'if you are seeing this message.'
+    )
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            if review.author != request.user:
+                messages.error(
+                    request,
+                    "You can not delete other people's reviews."
+                )
+                return redirect('event-detail', event_id=review.event.id)
+            else:
+                review.delete()
+                messages.success(request, 'Your review has now been deleted.')
+                return redirect('event-detail', event_id=review.event.id)
+        else:
+            messages.error(request, get_request_error)
+            return redirect('index')
     else:
-        review.delete()
-        messages.success(request, 'Your review has now been deleted.')
-        return redirect('event-detail', event_id=review.event.id)
+        messages.error(request, not_logged_in_error)
+        return redirect('index')
 
 
 def all_events_view(request):
