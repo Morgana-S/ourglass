@@ -137,6 +137,10 @@ When the user is done with their session, they can easily log out of their accou
 ![Searching for Events](/documentation/feature-images/search-for-events.gif)
 Users can search for events when logged in by typing in words associated with the event. If the search field is left blank, all events will be listed. Clicking 'view event' on each one takes you to the event detail page.
 
+### Seeing All Events
+![Viewing all Events](/documentation/feature-images/all-events.gif)
+If users are unsure of what kind of event they want to attend, they can also click the option to see all events from the navigation bar.
+
 ### View Latest Events
 ![Viewing Latest Events](/documentation/feature-images/latest-events.gif)
 A carousel on the index page appears for logged in users, which documents the last five created events. This provides event organisers with a chance to have their events on every user's index page, encouraging them to join. A bootstrap carousel component is used to make this feature both visually appealing and mobile accessible, as mobile users can swipe between the carousel items. Desktop users are able to user the included arrow icons to navigate. Clicking 'view event' on each one takes you to the event detail page.
