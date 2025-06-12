@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.utils import timezone
 from datetime import timedelta
 from django.core.files.uploadedfile import SimpleUploadedFile
-from .forms import EventForm
+from .forms import EventForm, ReviewForm
 # Create your tests here.
 
 
@@ -128,3 +128,50 @@ class TestEventForm(TestCase):
         data['is_online'] = False
         form = EventForm(data=data, files={'image': self.image})
         self.assertTrue(form.is_valid())
+
+
+class TestReviewForm(TestCase):
+    """
+    TestCase for all Review Form Tests.
+    """
+
+    def setUp(self):
+        testContent = (
+            "This event was amazing! It's also really, really easy to test!"
+        )
+        self.valid_data = {
+            'rating': 4,
+            'content': testContent
+        }
+        self.short_content_data = {
+            'rating': 4,
+            'content': 'Test'
+        }
+        self.missing_data = {
+            'rating': '',
+            'content': ''
+        }
+
+    def test_valid_review_form(self):
+        """
+        Tests if the form data is valid.
+        """
+        form = ReviewForm(data=self.valid_data)
+        self.assertTrue(form.is_valid(), msg='Form is not valid')
+
+    def test_review_content_too_short(self):
+        """
+        Tests if the review content is too short.
+        """
+        form = ReviewForm(data=self.short_content_data)
+        self.assertFalse(form.is_valid(), msg='Content length is acceptable')
+
+    def test_review_missing_fields(self):
+        """
+        Tests if the form is missing fields. Also confirms if there are 
+        errors in the form fields when submitted.
+        """
+        form = ReviewForm(data=self.missing_data)
+        self.assertFalse(form.is_valid(), msg='Form data is valid')
+        self.assertIn('rating', form.errors)
+        self.assertIn('content', form.errors)
