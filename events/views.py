@@ -447,7 +447,7 @@ def delete_review_view(request, review_id):
 
 def all_events_view(request):
     """
-    View for viewing all events, used with the 'Book Events' link in 
+    View for viewing all events, used with the 'Book Events' link in
     the navbar. This displays all events that are in the future that the user
     is eligible to book.
 
@@ -485,7 +485,6 @@ def all_events_view(request):
             not_logged_in_error
         )
         return redirect('index')
-
 
     return render(request, 'events/all-events.html', context)
 
@@ -541,7 +540,7 @@ def search_events_view(request):
 
 def booking_tickets_view(request, event_id):
     """
-    View for booking tickets for an event. Passes the BookingForm to the 
+    View for booking tickets for an event. Passes the BookingForm to the
     template and saves the user input to a new booking instance in the
     database.
 
