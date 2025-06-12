@@ -327,6 +327,12 @@ class TestLogoutView(TestCase):
         )
 
     def test_logs_user_out_and_redirects(self):
+        """
+        Logs the user in with the above details, checks whether the user
+        is authenticated, then logs the user out and checks again
+        whether the user is authenticated. Also checks whether the logout
+        view redirects to the index page.
+        """
         self.client.login(username='test', password='pass')
         response = self.client.get(self.index_url)
         self.assertTrue(response.wsgi_request.user.is_authenticated)
