@@ -290,15 +290,24 @@ def delete_event_view(request, event_id):
         'You do not have permission to delete this event.'
     )
     success_message = ('This event has now been deleted.')
-
-    if request.user != event.event_organiser:
-        messages.error(request, not_authorised_error)
-        return redirect('event-detail', event_id=event_id)
+    not_logged_in_error = (
+        'You cannot delete an event as you are not currently logged in. '
+        'Please make an account using the sign up process, or log in.'
+    )
+    if request.user.is_authenticated:
+        if request.user != event.event_organiser:
+            messages.error(request, not_authorised_error)
+            return redirect('event-detail', event_id=event_id)
+        else:
+            event.delete()
+            messages.success(request, success_message)
+            return redirect('my-events')
     else:
-        event.delete()
-        messages.success(request, success_message)
-        return redirect('my-events')
-
+        messages.error(
+            request,
+            not_logged_in_error
+        )
+        return redirect('index')
 
 def review_event_view(request, event_id):
     """
