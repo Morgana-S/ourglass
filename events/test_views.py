@@ -295,7 +295,7 @@ class EventDetailViewTests(TestCase):
         reviews = response.context['reviews']
         self.assertEqual(reviews.paginator.num_pages, 2)
         self.assertEqual(reviews.paginator.count, 15)
-        self.assertEqual(len(reviews.object_list), 9) 
+        self.assertEqual(len(reviews.object_list), 9)
         response_page_2 = self.client.get(self.url + '?page=2')
         reviews_page_2 = response_page_2.context['reviews']
         self.assertEqual(len(reviews_page_2.object_list), 6)
