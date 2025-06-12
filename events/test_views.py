@@ -1154,3 +1154,105 @@ class TestAllEventsView(TestCase):
         events_page_2 = response.context['events']
         self.assertLessEqual(len(events_page_2), 9)
         self.assertTrue(events_page_2.has_previous())
+
+
+class TestSearchEventsView(TestCase):
+    """
+    TestCase for the search_events View.
+    """
+
+    def setUp(self):
+        self.url = reverse('search-events')
+        self.user = User.objects.create_user(
+            username='test',
+            password='pass'
+        )
+        for i in range(4):
+            Event.objects.create(
+                event_name=f'Test Event{i}',
+                event_date=timezone.now() + timezone.timedelta(days=3+i),
+                created_on=timezone.now(),
+                image='test.jpg',
+                event_organiser=self.user,
+                is_online=True,
+                maximum_attendees=100,
+                short_description='Short description',
+                long_description='Long description',
+            )
+        for i in range(3):
+            Event.objects.create(
+                event_name=f'Test Event{i}',
+                event_date=timezone.now() - timezone.timedelta(days=3+i),
+                created_on=timezone.now(),
+                image='test.jpg',
+                event_organiser=self.user,
+                is_online=True,
+                maximum_attendees=100,
+                short_description='Short description',
+                long_description='Long description',
+            )
+
+    def test_default_excludes_past_events(self):
+        """
+        Checks that the search query goes through, uses the correct template
+        and does not include past events.
+        """
+        response = self.client.get(self.url, {'q': 'Event'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'events/search-events.html')
+        self.assertEqual(response.context['results'].paginator.count, 4)
+        self.assertFalse(response.context['include_past'])
+
+    def test_includes_past_events_when_checked(self):
+        """
+        Checks that the search query goes through and includes past events.
+        """
+        response = self.client.get(
+            self.url, {'q': 'Event', 'past-events': 'on'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['results'].paginator.count, 7)
+        self.assertTrue(response.context['include_past'])
+
+    def test_no_matching_results(self):
+        """
+        Tests that a query with non-matching results goes through but returns
+        no results.
+        """
+        response = self.client.get(self.url, {'q': 'Nonexistent'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Nonexistent')
+        self.assertEqual(response.context['results'].paginator.count, 0)
+
+    def test_case_insensitive_search(self):
+        """
+        Tests that search results are case-insensitive.
+        """
+        response = self.client.get(self.url, {'q': 'Test Event'})
+        self.assertEqual(response.status_code, 200)
+        self.assertGreaterEqual(response.context['results'].paginator.count, 4)
+
+    def test_pagination_limit(self):
+        """
+        Tests that pagination works correctly, that it paginates to 6
+        events per page, that the second page request goes through, and that
+        the second page has a previous page to navigate back to.
+        """
+        # Create 10 future events to force pagination
+        for i in range(10):
+            Event.objects.create(
+                event_name=f'Extra Event {i}',
+                event_date=timezone.now() + timezone.timedelta(days=i+10),
+                created_on=timezone.now(),
+                event_organiser=self.user,
+                image='test.jpg',
+                is_online=True,
+                maximum_attendees=50,
+                short_description='Extra description',
+                long_description='Extra long description',
+            )
+        response = self.client.get(self.url, {'q': 'Event'})
+        self.assertEqual(response.context['results'].paginator.num_pages, 3)
+        self.assertEqual(len(response.context['results']), 6)
+        response_page_2 = self.client.get(self.url, {'q': 'Event', 'page': 2})
+        self.assertEqual(response_page_2.status_code, 200)
+        self.assertTrue(response_page_2.context['results'].has_previous())
