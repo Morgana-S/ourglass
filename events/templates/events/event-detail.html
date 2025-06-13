@@ -41,7 +41,7 @@
             {{ event.long_description|safe }}
             {% if request.user == event.event_organiser %}
             <div class="mt-auto border rounded px-2 py-2">
-                <h4>Event Attendees</h3>
+                <h4>Event Attendees</h4>
                     {% if event.bookings.all %}
                     <ul class="d-flex flex-wrap gap-2 list-unstyled">
                         {% for booking in event.bookings.all %}
