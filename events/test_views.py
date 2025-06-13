@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.utils import timezone
 from unittest.mock import patch
 from .models import Event, Booking, Review
-from .forms import EventForm, ReviewForm
+from .forms import EventForm, ReviewForm, BookingForm
 # Create your tests here.
 
 
@@ -1379,3 +1379,93 @@ class TestBookingTicketsView(TestCase):
             "You cannot book your own event.",
             [m.message for m in messages]
         )
+
+
+class TestEditBookingView(TestCase):
+    """
+    TestCase for edit_booking View.
+    """
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='test',
+            password='pass'
+        )
+        self.other_user = User.objects.create_user(
+            username='other',
+            password='pass'
+        )
+        self.event = Event.objects.create(
+            event_name='Test Event',
+            event_date=timezone.now() + timezone.timedelta(days=3),
+            created_on=timezone.now(),
+            image='test.jpg',
+            event_organiser=self.other_user,
+            is_online=True,
+            maximum_attendees=100,
+            short_description='Short description',
+            long_description='Long description',
+        )
+        self.booking = Booking.objects.create(
+            event=self.event,
+            ticketholder=self.user,
+            tickets=2
+        )
+        self.url = reverse('edit-booking', args=[self.event.id])
+
+    def test_redirects_if_not_logged_in(self):
+        """
+        Attempts to edit a booking while not logged in. Should redirect to
+        index page and send the user a message advising that they are not
+        logged in.
+        """
+        response = self.client.get(self.url, follow=True)
+        self.assertRedirects(response, reverse('index'))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn(
+            'You cannot book tickets as you are not currently logged in. '
+            'Please make an account using the sign up process, or log in.',
+            [m.message for m in messages]
+        )
+
+    def test_shows_edit_form_on_get(self):
+        """
+        Checks a GET request shows a pre-filled form with the Booking Details
+        in it. Confirms the status code, that the right template is used,
+        and that the context data is passed to the form correctly.
+        """
+        self.client.login(username='test', password='pass')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'events/edit-booking.html')
+        self.assertIsInstance(response.context['form'], BookingForm)
+        self.assertEqual(response.context['form'].instance, self.booking)
+
+    def test_successful_booking_edit(self):
+        """
+        Logs the user in, then attempts to update the ticket quantity in the
+        edit booking form.
+        """
+        self.client.login(username='test', password='pass')
+        response = self.client.post(
+            self.url, {'tickets': 3}, follow=True)
+
+        self.booking.refresh_from_db()
+        self.assertEqual(self.booking.tickets, 3)
+        self.assertRedirects(response, reverse(
+            'event-detail', args=[self.event.id]))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn(
+            'Your booking has now been updated.',
+            [m.message for m in messages]
+        )
+
+    def test_user_cannot_edit_others_booking(self):
+        """
+        Tests that a user should get a 404 error if they try to
+        edit someone else's booking.
+        """
+        self.client.login(username='other', password='pass')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 404)
+
