@@ -129,12 +129,29 @@ Browser - Basic Functionality | Website was opened with Microsoft Edge, Google C
 | Anonymous User - Attempt to Create an Event | While not logged in, user navigates to /events/create-event/. | User is redirected to index page, and a message displays saying they can't create an event. | Working as intended. | 
 | Anonymous User - Attempt to Edit an Event | While not logged in, user navigates to /events/edit-event/32. | User is redirected to index page, and a message displays saying they can't edit an event. | Working as intended. | 
 | Anonymous User - Attempt to Delete an Event | While not logged in, user navigates to /events/delete-event/32. | User is redirected to index page, and a message displays saying they can't delete an event. | Working as intended. | 
-| Anonymous User - Attempt to Book Tickets for an Event | While not logged in, user navigates to /events/book-event/32. | User is redirected to index page, and a message displays saying they can't book tickets for an event. | Working as intended. | 
-| Anonymous User - Attempt to Edit Booking for an Event | While not logged in, user navigates to /events/book-event/32. | User is redirected to index page, and a message displays saying they can't edit tickets for an event. | Working as intended - message indicates they are attempting to book tickets rather than edit a booking. Fixed message. | 
+| Anonymous User - Attempt to Book Tickets for an Event | While not logged in, user navigates to /events/book-tickets/72. | User is redirected to index page, and a message displays saying they can't book tickets for an event. | Working as intended. | 
+| Anonymous User - Attempt to Edit Booking for an Event | While not logged in, user navigates to /events/edit-booking/17. | User is redirected to index page, and a message displays saying they can't edit tickets for an event. | Working as intended - message indicates they are attempting to book tickets rather than edit a booking. Fixed message. | 
+| Anonymous User - Attempt to Delete Tickets for an Event | While not logged in, user navigates to /events/delete-booking/17. | User is redirected to index page, and a message displays saying they aren't logged in. | Working as intended. | 
+| Anonymous User - Attempt to Review an Event | While not logged in, user navigates to /events/review-event/32. | User is redirected to index page, and a message displays saying they aren't logged in. | Working as intended. | 
+| Anonymous User - Attempt to Edit a Review | While not logged in, user navigates to /events/edit-review/10. | User is redirected to index page, and a message displays saying they aren't logged in. | Working as intended. | 
+| Anonymous User - Attempt to Delete a Review | While not logged in, user navigates to /events/delete-review/10. | User is redirected to index page, and a message displays saying they aren't logged in. | Working as intended. | 
+| Authorised User - Attempt to Edit an Event (not organiser) | While logged in, user navigates to /events/edit-event/15/ They are not the organiser of this event. | User is unable to edit the event, and is prompted to return to the event detail page. | Working as intended. | 
+| Authorised User - Attempt to Delete an Event (not organiser) | While logged in, user navigates to /events/delete-event/15/ They are not the organiser of this event. | User is unable to delete event, and is redirected to the event detail page. A message displays saying the user can't delete the event. | Working as intended. | 
+| Authorised User - Attempt to Review Event (not attendee) | While logged in, user navigates to /events/review-event/4/. They are not an attendee for the event. | User is able to enter content in the review, but upon submission, they are directed back to the event detail page with a message about not being able to leave a review. | Working as intended. | 
+| Authorised User - Attempt to Edit a Review (not reviewer) | While logged in, user navigates to /events/edit-review/10/. They are not the original reviewer. | User is able to edit the review content, but upon submission, they are returned to the event page with a message about the review not being updated. | Working as intended. | 
+| Authorised User - Attempt to Delete a Review (not reviewer) | While logged in, user navigates to /events/delete-review/10/. They are not the original reviewer. | As the only way for this request to be accessed by ordinary use is a GET request (if they are not the original reviewer), the user is directed back to the index page with an error message. | Working as intended. Considered changing the GET request error, but given that users should not access the delete-review view this way under ordinary circumstances, I will leave as-is as it's something the site admins should be contacted about.|
 
-### CRUD Functionality
 
-### Forms and User Input
+### CRUD Functionality, Forms and Input
+| Test | Method | Desired Results | Actual Results |
+| --- | --- | --- | --- |
+| Authorised User - Create Event | The user logs in, goes to the create-event page, and fills out the details of their event, providing all fields. | Event is created with user input details. | Working as intended. |
+| Authorised User - Create Event - Invalid Date | The user logs in, goes to the create-event page, and fills out the details of their event, providing all fields, but having an event in the past. | Event is not created, user receives error message confirming this and the field is shown as not being filled properly. | Working as intended. |
+| Authorised User - Create Event - No image | The user logs in, goes to the create-event page, and fills out the details of their event, providing all fields, but does not submit an image | Event is not created, user is directed to upload an image.| Working as intended. |
+| Authorised User - Create Event - Invalid file | The user logs in, goes to the create-event page, and fills out the details of their event, providing all fields, but submits a file that isn't an image. | Event is not created, user is directed to upload an image.| User can submit files that are not images - this is handled by displaying the alt text for the "image", which is the event name.  Bug detailed below.|
+| Authorised User - Create Event - Invalid Attendee Number | The user logs in, goes to the create-event page, and fills out the details of their event, providing all fields, but sets the event attendees to 0. | Event is not created and user is given a message to explain they need to provide a valid attendee number.| Working as intended.|
+| Authorised User - Create Event - Invalid Attendee Number | The user logs in, goes to the create-event page, and fills out the details of their event, providing all fields, but sets the event attendees to -60. | Event is not created and user is asked to provide a number that isn't below 0.| Working as intended.|
+| Authorised User - Create Event - Invalid Attendee Number | The user logs in, goes to the create-event page, and fills out the details of their event, providing all fields, but sets the event attendees to 1000. | Event is not created and user is given a message to explain they need to provide a valid attendee number.| Working as intended.|
 
 ### Custom JavaScript Functionality
 
@@ -175,6 +192,10 @@ Browser - Basic Functionality | Website was opened with Microsoft Edge, Google C
     - Cause: This is caused by the z-index of messages not being high enough.
     - Fix: Z-Index of messages set to z-3 using bootstrap to ensure they appear above other elements.
 
+- **Creating / Editing an Event: Attempting to upload a file that isn't an image is possible.**
+    - Cause: This is because of a lack of validation of image data when submitting an image.
+    - Tried Solutions: Attempting to implement a quick fix by passing cleaned image data to the Pillow library(https://pypi.org/project/pillow/) and also attempted to implement the CloudinaryFileForm input, which threw more errors as forms were not designed for use with these fields.
+    - Current Status: Known issue, has been logged on the issues page. As the user is directed to upload an image by default, they would have to attempt to deliberately circumvent the image upload.
 ## Code Validation
 
 ## Lighthouse Reports
