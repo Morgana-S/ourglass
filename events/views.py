@@ -645,13 +645,13 @@ def edit_booking_view(request, event_id):
         'You cannot book tickets as you are not currently logged in. '
         'Please make an account using the sign up process, or log in.'
     )
-    event = get_object_or_404(Event, id=event_id)
-    booking = get_object_or_404(
-        Booking,
-        event=event,
-        ticketholder=request.user
-    )
     if request.user.is_authenticated:
+        event = get_object_or_404(Event, id=event_id)
+        booking = get_object_or_404(
+            Booking,
+            event=event,
+            ticketholder=request.user
+        )
         if request.method == 'POST':
             booking_form = BookingForm(
                 request.POST,
