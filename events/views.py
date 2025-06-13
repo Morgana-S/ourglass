@@ -690,12 +690,16 @@ def delete_booking_view(request, booking_id):
     Validation exists to ensure that only the ticketholder can delete their
     bookings.
     """
-    booking = get_object_or_404(Booking, id=booking_id)
+    if request.user.is_authenticated:
+        booking = get_object_or_404(Booking, id=booking_id)
 
-    if booking.ticketholder != request.user:
-        messages.error(request, "You can not cancel other people's bookings.")
-        return redirect('event-detail', event_id=booking.event.id)
+        if booking.ticketholder != request.user:
+            messages.error(request, "You can not cancel other people's bookings.")
+            return redirect('event-detail', event_id=booking.event.id)
+        else:
+            booking.delete()
+            messages.success(request, 'Your booking has now been cancelled.')
+            return redirect('event-detail', event_id=booking.event.id)
     else:
-        booking.delete()
-        messages.success(request, 'Your booking has now been cancelled.')
-        return redirect('event-detail', event_id=booking.event.id)
+        messages.error(request, 'You are not logged in.')
+        return redirect('index')
