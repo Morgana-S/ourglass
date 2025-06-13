@@ -38,37 +38,37 @@
         <!-- Pagination Controls -->
         <nav aria-label="Search Results Pagination">
             <div class="d-flex justify-content-center">
-            <ul class="pagination">
-                {% if results.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?q={{ query }}{% if include_past %}&past-events=on{% endif %}&page={{ results.previous_page_number }}" aria-label="Click here to navigate to the previous page of results">
-                        &laquo;
-                    </a>
-                </li>
-                {% else %}
-                <li class="page-item disabled">
-                    <span class="page-link">&laquo;</span>
-                </li>
-                {% endif %}
-                {% for num in results.paginator.page_range %}
-                {% if results.number == num %}
-                <li class="page-item active" aria-current="page"><span class="page-link">{{ num }}</span></li>
-                {% else %}
-                <li class="page-item">
-                    <a class="page-link" href="?q={{ query }}{% if include_past %}&past-events=on{% endif %}&page={{ num }}">{{ num }}</a>
-                </li>
-                {% endif %}
-                {% endfor %}
-                {% if results.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?q={{ query }}{% if include_past %}&past-events=on{% endif %}&page={{ results.next_page_number }}" aria-label="Click here to navigate to the next page of results">&raquo;</a>
-                </li>
-                {% else %}
-                <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
-                {% endif %}
-            </ul>
+                <ul class="pagination">
+                    {% if results.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?q={{ query }}{% if include_past %}&past-events=on{% endif %}&page={{ results.previous_page_number }}" aria-label="Click here to navigate to the previous page of results">
+                            &laquo;
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">&laquo;</span>
+                    </li>
+                    {% endif %}
+                    {% for num in results.paginator.page_range %}
+                    {% if results.number == num %}
+                    <li class="page-item active" aria-current="page"><span class="page-link">{{ num }}</span></li>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?q={{ query }}{% if include_past %}&past-events=on{% endif %}&page={{ num }}">{{ num }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                    {% if results.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?q={{ query }}{% if include_past %}&past-events=on{% endif %}&page={{ results.next_page_number }}" aria-label="Click here to navigate to the next page of results">&raquo;</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                    {% endif %}
+                </ul>
+            </div>
         </nav>
-    </div>
         {% else %}
         <p>No events found matching your search.</p>
         {% endif %}
