@@ -235,7 +235,69 @@ Browser - Basic Functionality | Website was opened with Microsoft Edge, Google C
 - **Admin Panel: Search Functionality for Bookings and Events returning an error.**
     - Cause: Improper labelling of search fields for these models. 'event name' instead of 'event__event_name', as you need to refer to them by their relational names if they are foreign keys.
     - Fix: Updated search fields with correct functionality.
-    
+
 ## Code Validation
 
+### HTML
+#### Index Page - Anonymous
+#### Index Page - Logged In
+#### Sign Up Page
+aria-describedby is created by the custom template for the form fields from all-auth; not able to fix at present due to time constraints. 
+#### Log In Page
+aria-describedby is created by the custom template for the form fields from all-auth; not able to fix at present due to time constraints. 
+#### Contact Us Page
+#### My Events Page
+#### Book Events (All Events Page)
+#### Search Events Page
+#### Create Event
+textarea attribute, style, cols, maxlength etc. affected by summernote - not able to fix at present due to time constraints.
+#### Event Detail Page - Event Attendee
+#### Event Detail Page - Event Organiser
+#### Book Tickets Page
+#### Edit Booking Page
+#### Edit Event Page
+#### Leave Review Page
+#### Edit Review Page
+
+### CSS
+CSS Validation was done through the [W3C CSS Validator](https://jigsaw.w3.org/css-validator/validator) for the custom CSS across the entire website.
+![CSS Validation](/documentation/testing-images/css-validation.png)
+
+### JavaScript
+Custom JS was placed into [JSHint](https://jshint.com/) for validation.
+![JSHint Screenshot](/documentation/testing-images/jslint.png)
+
 ## Lighthouse Reports
+### Index Page - Anonymous
+![Index Page - Anonymous Lighthouse Report](/documentation/testing-images/lighthouse-index-anon.png)
+### Index Page - Logged In
+![Index Page - Logged In Lighthouse Report](/documentation/testing-images/lighthouse-index-authorised.png)
+### Sign Up Page
+![Sign Up Page Lighthouse Report](/documentation/testing-images/lighthouse-signup.png)
+### Log In Page
+![Log In Page Lighthouse Report](/documentation/testing-images/lighthouse-login.png)
+### Contact Us Page
+![Contact Us Page Lighthouse Report](/documentation/testing-images/lighthouse-contact.png)
+### My Events Page
+![My Events Page Lighthouse Report](/documentation/testing-images/lighthouse-myevents.png)
+### Book Events (All Events Page)
+Pages such as the All Events and Search Events pages are going to have worse performance due to large amounts of image files.
+![Book Events Lighthouse Report](/documentation/testing-images/lighthouse-allevents.png)
+### Search Events Page
+![Search Events Page Lighthouse Report](/documentation/testing-images/lighthouse-searchevents.png)
+### Create Event
+![Create Event Lighthouse Report](/documentation/testing-images/lighthouse-createevent.png)
+### Event Detail Page - Event Attendee
+![Event Detail Page - Event Attendee Lighthouse Report](/documentation/testing-images/lighthouse-event-detail-attendee.png)
+### Event Detail Page - Event Organiser
+![Event Detail Page - Event Organiser Lighthouse Report](/documentation/testing-images/lighthouse-event-detail-organiser.png)
+### Book Tickets Page
+![Book Tickets Page Lighthouse Report](/documentation//testing-images/lighthouse-book-tickets.png)
+### Edit Booking Page
+![Edit Booking Page Lighthouse Report](/documentation/testing-images/lighthouse-edit-booking.png)
+### Edit Event Page
+![Edit Event Page Lighthouse Report](/documentation/testing-images/lighthouse-edit-event.png)
+### Leave Review Page
+![Leave Review Page Lighthouse Report](/documentation/testing-images/lighthouse-review-event.png)
+### Edit Review Page
+![Edit Review Page Lighthouse Report](/documentation/testing-images/lighthouse-edit-review.png)
