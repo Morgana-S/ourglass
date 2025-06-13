@@ -17,7 +17,8 @@ def message_view(request):
     :template:`contact/contact.html
     """
     success_message = (
-        "Thank you, your message has been received and we will be in contact."
+        'Thank you, your message has been received and we will be '
+        'in contact.'
     )
     if request.method == 'POST':
         message_form = MessageForm(request.POST, user=request.user)
