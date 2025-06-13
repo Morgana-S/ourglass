@@ -415,3 +415,5 @@ The project can also be deployed locally. To do so, please follow these instruct
 - [SVG Repo](https://www.svgrepo.com/svg/527141/hourglass) - Royalty Free SVG that serves as the basis of the favicon
 
 - [Bootstrap Icons](https://icons.getbootstrap.com/) - Provide the basis for svgs used to render as icons for the latest events carousel
+
+- [FontAwesome](https://fontawesome.com/) - Icons for use in the star ratings.
