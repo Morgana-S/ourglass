@@ -1469,3 +1469,80 @@ class TestEditBookingView(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 404)
 
+
+class TestDeleteBookingView(TestCase):
+    """
+    TestCase for delete_booking View.
+    """
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='test',
+            password='pass'
+        )
+        self.other_user = User.objects.create_user(
+            username='other',
+            password='pass'
+        )
+        self.event = Event.objects.create(
+            event_name='Test Event',
+            event_date=timezone.now() + timezone.timedelta(days=3),
+            created_on=timezone.now(),
+            image='test.jpg',
+            event_organiser=self.other_user,
+            is_online=True,
+            maximum_attendees=100,
+            short_description='Short description',
+            long_description='Long description',
+        )
+        self.booking = Booking.objects.create(
+            event=self.event,
+            ticketholder=self.user,
+            tickets=2
+        )
+
+    def test_user_can_delete_own_booking(self):
+        """
+        Logs in as the user and tries to delete their booking. Should
+        confirm that the booking no longer exists, that the user is redirected
+        to the event-detail page, and that they receive a message confirming
+        the booking has been cancelled.
+        """
+        self.client.login(username='test', password='pass')
+        url = reverse('delete-booking', args=[self.booking.id])
+        response = self.client.post(url, follow=True)
+        self.assertFalse(Booking.objects.filter(
+            id=self.booking.id).exists())
+        self.assertRedirects(response, reverse(
+            'event-detail', args=[self.event.id]))
+        messages = [m.message for m in get_messages(response.wsgi_request)]
+        self.assertIn('Your booking has now been cancelled.', messages)
+
+    def test_user_cannot_delete_others_booking(self):
+        """
+        Logs in as the other user and tries to delete the booking.
+        Should confirm that the booking still exists, that the user is
+        redirected to the event-detail page, and that they receive a message
+        confirming they can not cancel other users bookings.
+        """
+        self.client.login(username='other', password='pass')
+        url = reverse('delete-booking', args=[self.booking.id])
+        response = self.client.post(url, follow=True)
+        self.assertTrue(Booking.objects.filter(
+            id=self.booking.id).exists())
+        self.assertRedirects(response, reverse(
+            'event-detail', args=[self.event.id]))
+        messages = [m.message for m in get_messages(response.wsgi_request)]
+        self.assertIn("You can not cancel other people's bookings.", messages)
+
+    def test_redirect_if_not_logged_in(self):
+        """
+        If an anonymous user tries to delete a booking, it should redirect
+        them to the index page and advise them they are not logged in.
+        """
+        url = reverse('delete-booking', args=[self.booking.id])
+        response = self.client.post(url, follow=True)
+        self.assertTrue(Booking.objects.filter(id=self.booking.id).exists())
+        self.assertRedirects(response, reverse('index'))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn('You are not logged in.', [m.message for m in messages])
