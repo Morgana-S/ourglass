@@ -694,7 +694,10 @@ def delete_booking_view(request, booking_id):
         booking = get_object_or_404(Booking, id=booking_id)
 
         if booking.ticketholder != request.user:
-            messages.error(request, "You can not cancel other people's bookings.")
+            messages.error(
+                request,
+                "You can not cancel other people's bookings."
+            )
             return redirect('event-detail', event_id=booking.event.id)
         else:
             booking.delete()
