@@ -5,12 +5,16 @@ The project contains two apps, the events app and the contact app. These apps ar
 
 Automated testing was carried out using the in-built django testing library, which is based on unittest. While testing, I used an sqlite database to create mock data for the tests. This allowed me to focus on the behaviour of the forms and views rather than worrying about creating or using junk data in the PostgreSQL database.
 
+Fortunately, the testing process revealed a few bugs and many instances of poorly-planned
+views, which have since been refactored. The history of these refactors is available in the git commits, but I have also included these in the bugs section below.
+
 ### Events App Automated Testing
-
-
+There is a warning in the below tests that an unordered list may result in inconsistent order
+when paginating - this is for the reviews, which do not necessarily need to be ordered to be presented; I am therefore ignoring this warning.
+![Testing - Events App](/documentation/testing-images/testing-events.png)
 
 ### Contact App Automated Testing
-
+![Testing - Contact App](/documentation/testing-images/testing-contact.png)
 
 ## Manual Testing
 
@@ -46,3 +50,5 @@ Automated testing was carried out using the in-built django testing library, whi
     - Fix: Add is_authenticated conditional and redirect user to index page with message if they are not logged in.
 
 ## Code Validation
+
+## Lighthouse Reports
