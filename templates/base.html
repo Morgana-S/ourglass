@@ -90,20 +90,20 @@
     <!-- Messages -->
     {% if messages %}
     <aside id="messages">
-        <div class="container mt-2 position-fixed top-0 start-50 translate-middle-x text-center z-3">
+        <div class="container mt-2 position-fixed top-0 start-50 translate-middle-x text-center">
             {% for message in messages %}
             {% if message.tags == "success" %}
-            <div class="alert alert-success alert-dismissible fade show">
+            <div class="alert alert-success alert-dismissible fade show z-3">
                 {{ message }}
                 <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="alert"></button>
             </div>
             {% elif message.tags == "error" %}
-            <div class="alert alert-danger alert-dismissible fade show">
+            <div class="alert alert-danger alert-dismissible fade show z-3">
                 {{ message }}
                 <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="alert"></button>
             </div>
             {% else %}
-            <div class="alert alert-info alert-dismissible fade show">
+            <div class="alert alert-info alert-dismissible fade show z-3">
                 {{ message }}
                 <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="alert"></button>
             </div>
