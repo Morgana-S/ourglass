@@ -143,6 +143,7 @@ Browser - Basic Functionality | Website was opened with Microsoft Edge, Google C
 
 
 ### CRUD Functionality, Forms and Input
+
 | Test | Method | Desired Results | Actual Results |
 | --- | --- | --- | --- |
 | Authorised User - Create Event | The user logs in, goes to the create-event page, and fills out the details of their event, providing all fields. | Event is created with user input details. | Working as intended. |
@@ -166,11 +167,26 @@ Browser - Basic Functionality | Website was opened with Microsoft Edge, Google C
 | Authorised User - Create Review - Invalid Content Length | As above, but instead of the rating, ensure content is shorter than 50 character. | Review should not be submitted, user should receive a validation error message asking them to write more. | Working as intended.
 | Authorised User - Edit Review | User goes to the Event Detail page where they have left a review, clicks the edit review button, and changes the content of the fields. | Review is submitted with new rating/content, review is set to unapproved again. Receive message that review has been updated. | Working as intended. Checking the form fields with invalid content as above returns user to event detail page and advises the review isn't able to be updated. |
 | Authorised User - Delete Review | User goes to the Event Detail page where they have left a review, clicks the edit review button, and clicks delete review. | Modal appears asking user to confirm, when clicked to confirm, the review is deleted and the user redirected to the event detail page with a message confirming this. | Working as intended. |
+| Authorised User - Contact Us Form | As a logged in user, go to the contact us form and specify a reason and provide content for a message. | User is directed back to contact us page, receives message about message being received. Message appears in the admin panel. | Working as intended. |
+| Authorised User - Contact Us Form - Invalid content | As a logged in user, go to the contact us form and specify a reason but do not provide content to the message. | Form does not submit, user is directed to provide content. | Working as intended. |
+| Unauthorised User - Contact Us Form | As an anonymous user, go to the contact us page, fill out guest name, guest email, message reason and content. | As above, user should be redirected to contact us page with a message confirming message. Admin panel should have message with all fields filled. | Working as intended. |
+| Unauthorised User - Contact Us Form - Invalid Data | As an anonymous user, go to the contact us page, leave one or more fields blank. | Form does not submit, user is directed to provide content for the missing field. | Working as intended. |
 
 ### Custom JavaScript Functionality
-
+| Test | Desired Results | Actual Results |
+| --- | --- | --- |
+| RatingsConverter | Leaving a review as above, the ratings converter should automatically populate reviews with stars from the fontawesome icons. | Working as intended. |
+| deleteButtonEnable | Checks if a delete button modal exists on the page, then adds an event listener that submits the delete form when clicked. | Working as intended. |
+| initializeTooltips | Bootstrap functionality to initialize tooltip for GitHub logo in footer. | Working as intended.
+| flatpickr | Initializes the flatpickr form to allow users to select date times when creating events. | Works, but throws an error about corrupted content for the localisation - bug mentioned below, but event picker functionality works, so not a priority to fix. | 
 
 ### Admin Functionality
+| Test | Desired Results | Actual Results |
+| --- | --- | --- |
+| Models | All models are registered and appear in the admin panel. | Working as intended. |
+| Filter and Sorting | All models are able to be filtered and sorted by relevant fields. | True for Events and Messages models; Bookings and Reviews were not sorted at time of testing. This has since been implemented. Functionality for Bookings and Reviews is less useful than in other models, but still useful. | 
+| CRUD functionality | It is possible to Create, Read, Update and Delete instances of models from the admin panel. | Working as intended. |
+| Search Functionality | It is possible to search the fields for each model by various factors, such as event name or ticketholder. | Was broken due to incorrect search field terms used. Bug detailed below. Now working as intended. |
 
 ## Peer Reviewed Testing
 
@@ -211,6 +227,15 @@ Browser - Basic Functionality | Website was opened with Microsoft Edge, Google C
     - Cause: This is because of a lack of validation of image data when submitting an image.
     - Tried Solutions: Attempting to implement a quick fix by passing cleaned image data to the Pillow library(https://pypi.org/project/pillow/) and also attempted to implement the CloudinaryFileForm input, which threw more errors as forms were not designed for use with these fields.
     - Current Status: Known issue, has been logged on the issues page. As the user is directed to upload an image by default, they would have to attempt to deliberately circumvent the image upload.
+
+- **flatpickr functionality: NS ERROR CORRUPTED Content in console when attempting to get the localisation script from flatpickr.**
+    - Cause: Unknown at present. Possibly due to locale for flatpickr being 'uk' rather than 'us' in the javascript functionality.
+    - Fix: Further testing required. Does not affect core website functionality at present - users are still able to pick dates from the datetime picker.
+
+- **Admin Panel: Search Functionality for Bookings and Events returning an error.**
+    - Cause: Improper labelling of search fields for these models. 'event name' instead of 'event__event_name', as you need to refer to them by their relational names if they are foreign keys.
+    - Fix: Updated search fields with correct functionality.
+    
 ## Code Validation
 
 ## Lighthouse Reports
