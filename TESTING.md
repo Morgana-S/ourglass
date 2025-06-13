@@ -54,11 +54,60 @@ Browser - Basic Functionality | Website was opened with Microsoft Edge, Google C
 ![Contact Us Page - Pixel](/documentation/testing-images/contact-us-pixel.png)
 ![Contact Us Page - Tablet](/documentation/testing-images/contact-us-ipad.png)
 #### My Events Page
-
+![My Events Page - iMac](/documentation/testing-images/my-events-mac.png)
+![My Events Page - iPhone](/documentation/testing-images/my-events-iphone.png)
+![My Events Page - Pixel](/documentation/testing-images/my-events-pixel.png)
+![My Events Page - Tablet](/documentation/testing-images/my-events-ipad.png)
 #### Book Events (All Events Page)
+![All Events Page - iMac](/documentation/testing-images/all-events-imac.png)
+![All Events Page - iPhone](/documentation/testing-images/all-events-iphone.png)
+![All Events Page - Pixel](/documentation/testing-images/all-events-pixel.png)
+![All Events Page - Tablet](/documentation/testing-images/all-events-ipad.png)
+#### Search Events Page
+![Search Events Page - iMac](/documentation/testing-images/search-events-mac.png)
+![Search Events Page - iPhone](/documentation/testing-images/search-events-iphone.png)
+![Search Events Page - Pixel](/documentation/testing-images/search-events-pixel.png)
+![Search Events Page - Tablet](/documentation/testing-images/search-events-ipad.png)
 #### Create Event
-
-
+![Create Event Page - iMac](/documentation/testing-images/create-event-mac.png)
+![Create Event Page - iPhone](/documentation/testing-images/create-event-iphone.png)
+![Create Event Page - Pixel](/documentation/testing-images/create-event-pixel.png)
+![Create Event Page - Tablet](/documentation/testing-images/create-event-ipad.png)
+#### Event Detail Page - Event Attendee
+![Event Detail Page - Attendee View - iMac](/documentation/testing-images/event-attendee-mac.png)
+![Event Detail Page - Attendee View - iPhone](/documentation/testing-images/event-attendee-iphone.png)
+![Event Detail Page - Attendee View - Pixel](/documentation/testing-images/event-attendee-pixel.png)
+![Event Detail Page - Attendee View - Tablet](/documentation/testing-images/event-attendee-ipad.png)
+#### Event Detail Page - Event Organiser
+![Event Detail Page - Organiser View - iMac](/documentation/testing-images/event-organiser-mac.png)
+![Event Detail Page - Organiser View - iPhone](/documentation/testing-images/event-organiser-iphone.png)
+![Event Detail Page - Organiser View - Pixel](/documentation/testing-images/event-organiser-pixel.png)
+![Event Detail Page - Organiser View - Tablet](/documentation/testing-images/event-organiser-ipad.png)
+#### Book Tickets Page
+![Book Tickets Page - iMac](/documentation/testing-images/book-ticket-mac.png)
+![Book Tickets Page - iPhone](/documentation/testing-images/book-ticket-iphone.png)
+![Book Tickets Page - Pixel](/documentation/testing-images/book-ticket-pixel.png)
+![Book Tickets Page - Tablet](/documentation/testing-images/book-ticket-ipad.png)
+#### Edit Booking Page
+![Edit Booking Page - iMac](/documentation/testing-images/edit-booking-mac.png)
+![Edit Booking Page - iPhone](/documentation/testing-images/edit-booking-iphone.png)
+![Edit Booking Page - Pixel](/documentation/testing-images/edit-booking-pixel.png)
+![Edit Booking Page - Tablet](/documentation/testing-images/edit-booking-ipad.png)
+#### Edit Event Page
+![Edit Event Page - iMac](/documentation/testing-images/edit-event-mac.png)
+![Edit Event Page - iPhone](/documentation/testing-images/edit-event-iphone.png)
+![Edit Event Page - Pixel](/documentation/testing-images/edit-event-pixel.png)
+![Edit Event Page - Tablet](/documentation/testing-images/edit-event-ipad.png)
+#### Leave Review Page
+![Review Event Page - iMac](/documentation/testing-images/review-event-mac.png)
+![Review Event Page - iPhone](/documentation/testing-images/review-event-iphone.png)
+![Review Event Page - Pixel](/documentation/testing-images/review-event-pixel.png)
+![Review Event Page - Tablet](/documentation/testing-images/review-event-ipad.png)
+#### Edit Review Page
+![Edit Review Page - iMac](/documentation/testing-images/edit-review-mac.png)
+![Edit Review Page - iPhone](/documentation/testing-images/edit-review-iphone.png)
+![Edit Review Page - Pixel](/documentation/testing-images/edit-review-pixel.png)
+![Edit Review Page - Tablet](/documentation/testing-images/edit-review-ipad.png)
 
 ### Navigation
 
@@ -68,14 +117,24 @@ Browser - Basic Functionality | Website was opened with Microsoft Edge, Google C
 | Authorised User Navigation Bar Use | Log the user in, and click all links on the navigation bar. | All navigation links work and navigate to the correct pages. | Working as intended. |
 | Unauthorised User Link Navigation | Go through the pages available to anonymous users and click every button or link to ensure they navigate correctly. | All navigation links work and navigate to the correct locations. | Working as intended. |
 | Authorised User Link Navigation | Log the user in, go through all pages accessible to the user and ensure they lead to the correct locations. | Working as intended. | 
+| Footer Link | Clicking the link to my GitHub page, as both a logged in and anonymous user. | Link opens a new tab to my GitHub page for the project. | Working as intended. |
 
 ### User Authentication and Authorisation
+
+| Test | Method | Desired Results | Actual Results |
+| --- | --- | --- | --- |
+| Signing Up | Anonymous user navigates to the sign up page, provides account credentials, and clicks the sign up button. | User account is created, they receive an email that contains a link for them to click to verify their account. Once clicked, the user has full access to the site. | Working as intended. |
+| Unverified User unable to access site | Anonymous user signs up, and then, before verifying their account, attempts to log in. | User is informed that they need to verify their account, and another confirmation email is sent to their registered email address. | Working as intended.
+| Logging In | Anonymous user navigates to the log in page, and signs into account using details. | User logs in successfully, is informed that they have logged in, and is redirected back to the index page. | Working as intended.
+| Anonymous User - Attempt to Create an Event | While not logged in, user navigates to /events/create-event/. | User is redirected to index page, and a message displays saying they can't create an event. | Working as intended. | 
+| Anonymous User - Attempt to Edit an Event | While not logged in, user navigates to /events/edit-event/32. | User is redirected to index page, and a message displays saying they can't edit an event. | Working as intended. | 
+| Anonymous User - Attempt to Delete an Event | While not logged in, user navigates to /events/delete-event/32. | User is redirected to index page, and a message displays saying they can't delete an event. | Working as intended. | 
+| Anonymous User - Attempt to Book Tickets for an Event | While not logged in, user navigates to /events/book-event/32. | User is redirected to index page, and a message displays saying they can't book tickets for an event. | Working as intended. | 
+| Anonymous User - Attempt to Edit Booking for an Event | While not logged in, user navigates to /events/book-event/32. | User is redirected to index page, and a message displays saying they can't edit tickets for an event. | Working as intended - message indicates they are attempting to book tickets rather than edit a booking. Fixed message. | 
 
 ### CRUD Functionality
 
 ### Forms and User Input
-
-### Responsiveness
 
 ### Custom JavaScript Functionality
 
@@ -115,6 +174,7 @@ Browser - Basic Functionality | Website was opened with Microsoft Edge, Google C
 - **Messages: messages informing the user of the success of an action get trapped behind other page elements, such as on the my events page, they get stuck behind the event cards.**
     - Cause: This is caused by the z-index of messages not being high enough.
     - Fix: Z-Index of messages set to z-3 using bootstrap to ensure they appear above other elements.
+
 ## Code Validation
 
 ## Lighthouse Reports
