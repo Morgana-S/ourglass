@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		enableTime:  true,
 		dateFormat: 'Y-m-d\\TH:i',
 		locale: 'uk'
-	})
+	});
 });
 
 /**
@@ -30,6 +30,9 @@ function ratingsConverter() {
 	});
 }
 
+/**
+ * Enables Delete Button Functionality
+ */
 function deleteButtonEnable() {
 	if (deleteButton) {
 		deleteButton.addEventListener('click', function () {
@@ -37,7 +40,9 @@ function deleteButtonEnable() {
 		});
 	}
 }
-
+/**
+ * Bootstrap required code to initialize tooltips
+ */
 function initializeTooltips(){
 	const tooltipTriggerList = document.querySelectorAll(
 		'[data-bs-toggle=tooltip]'
