@@ -90,7 +90,7 @@
     <!-- Messages -->
     {% if messages %}
     <aside id="messages">
-        <div class="container mt-2 position-fixed top-0 start-50 translate-middle-x text-center">
+        <div class="container mt-2 position-fixed top-0 start-50 translate-middle-x text-center z-3">
             {% for message in messages %}
             {% if message.tags == "success" %}
             <div class="alert alert-success alert-dismissible fade show">
