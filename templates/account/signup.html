@@ -13,7 +13,7 @@
     </div>
     <div id="sign-in-body">
         <p>
-            {% blocktranslate %}Already have an account? Then please <a href="{{ login_url }}" alt="Click here to sign in">sign in</a>.{% endblocktranslate %}
+            {% blocktranslate %}Already have an account? Then please <a href="{{ login_url }}" aria-label="Click here to sign in">sign in</a>.{% endblocktranslate %}
         </p>
         <form action="{% url 'account_signup' %}" method="post" class="mx-auto w-50" id="sign-up-form">
             {% csrf_token %}
