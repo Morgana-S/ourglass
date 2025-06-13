@@ -642,7 +642,7 @@ def edit_booking_view(request, event_id):
     """
     success_message = 'Your booking has now been updated.'
     not_logged_in_error = (
-        'You cannot book tickets as you are not currently logged in. '
+        'You cannot edit a booking as you are not currently logged in. '
         'Please make an account using the sign up process, or log in.'
     )
     if request.user.is_authenticated:
