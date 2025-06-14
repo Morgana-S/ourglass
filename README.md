@@ -308,7 +308,7 @@ The project can also be deployed locally. To do so, please follow these instruct
     - You will then be able to view the website by clicking the link to the address in the terminal or typing the following into your browser's URL address bar:
         - `http://127.0.0.1:8000/`
 
-## Credits
+## Credits & Technology
 
 ## Tools
 
@@ -419,3 +419,11 @@ The project can also be deployed locally. To do so, please follow these instruct
 - [Bootstrap Icons](https://icons.getbootstrap.com/) - Provide the basis for svgs used to render as icons for the latest events carousel
 
 - [FontAwesome](https://fontawesome.com/) - Icons for use in the star ratings.
+
+## Content
+
+- All content within the pages (event ideas, descriptions, etc. ) was created by myself.
+
+## Special Thanks
+
+- Thanks to [Code Institute](https://codeinstitute.net/) for tutorials and guidance in the development of this project.
