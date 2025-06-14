@@ -243,6 +243,8 @@ For details of automated and manual tests, as well as code validation, please se
 
 - Account management on the user's behalf is barebones at the moment, with basic styling on the pages for password resets. Enhancing these features for users should be a priority for future work in the project, as this is an area the site is woefully lacking. Basic functionality exists if a user -needs- to reset, their password, but I wouldn't describe it as complete.
 
+- As a compromise between ease-of-access and security, a better way to display event addresses and urls for online video sessions would be to send details of these addresses to users who have tickets. This helps to obscure the actual location and prevents people who are not invited from turning up to spoil the event. There would also need to be a way of implementing proximity-based events, so that users are able to book tickets for events which are strictly local to them, without technically revealing an address up front.
+
 # Deployment
 
 ## Deployment to Heroku
