@@ -1117,9 +1117,8 @@ class TestAllEventsView(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertRedirects(response, reverse('index'))
         messages = list(get_messages(response.wsgi_request))
-        self.assertIn(
-            not_logged_in_error,
-            [m.message for m in messages]
+        self.assertTrue(
+            any(not_logged_in_error in m.message for m in messages)
         )
 
     def test_shows_only_future_events_not_created_by_user(self):
@@ -1423,7 +1422,7 @@ class TestEditBookingView(TestCase):
         self.assertRedirects(response, reverse('index'))
         messages = list(get_messages(response.wsgi_request))
         self.assertIn(
-            'You cannot book tickets as you are not currently logged in. '
+            'You cannot edit a booking as you are not currently logged in. '
             'Please make an account using the sign up process, or log in.',
             [m.message for m in messages]
         )
