@@ -364,6 +364,8 @@ The project can also be deployed locally. To do so, please follow these instruct
 
 - [flatpickr](https://flatpickr.js.org/) - Datetime picker that enables localisation of date-time picking for create-event functionality.
 
+- [coverage.py](https://pypi.org/project/coverage/) - Test Execution Report provider.
+
 
 ### Python
 
