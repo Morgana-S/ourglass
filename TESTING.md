@@ -9,13 +9,17 @@ Fortunately, the testing process revealed a few bugs and many instances of poorl
 
 Unfortunately, I was unable to implement testing of my models and javascript testing with JEST, but due to the project containing minimal custom javascript, I considered JEST testing unnecessary.
 
+I also used the coverage.py library to provide a detailed coverage report of how comprehensive my tests were for each application.
+
 ### Events App Automated Testing
 There is a warning in the below tests that an unordered list may result in inconsistent order
 when paginating - this is for the reviews, which do not necessarily need to be ordered to be presented; I am therefore ignoring this warning.
 ![Testing - Events App](/documentation/testing-images/testing-events.png)
+![Coverage Report - Events App](/documentation/testing-images/coverage-events.png)
 
 ### Contact App Automated Testing
 ![Testing - Contact App](/documentation/testing-images/testing-contact.png)
+![Coverage Report - Contact App](/documentation/testing-images/coverage-contact.png)
 
 ## Manual Testing
 All Testing was carried out on the latest deployed version of the project on Heroku. 
