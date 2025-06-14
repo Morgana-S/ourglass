@@ -189,8 +189,13 @@ Browser - Basic Functionality | Website was opened with Microsoft Edge, Google C
 | Search Functionality | It is possible to search the fields for each model by various factors, such as event name or ticketholder. | Was broken due to incorrect search field terms used. Bug detailed below. Now working as intended. |
 
 ## Peer Reviewed Testing
+- The website was also tested by three different users on a variety of devices, from mobile phones to desktop PCs. Their feedback about the site can be found in the section below.
+- I also asked each user to carry out the tests found in the sections above. All users reported functionality in line with my test results, or where I have made changes, they reported results that they were working as intended.
 
 ## Feedback
+- Users were generally complementary of the site design and found it simple to navigate. One of the users, who admitted they are not good with technology, was able to make an account, log in, and make a booking with relative ease. 
+- Some of the users expressed a desire for enhanced functionality; such as the ability to book private events and send messages between users (especially to the organiser).
+- Concerns were raised about the "openness" of the website, especially for event organisers. With ease of access to event locations being made available to the public as soon as you have an account, it's very easy for bad actors to, for example, turn up at an event and cause trouble, or join an online meeting and not turn off their microphones. A safer way to provide address information would be via email to ticketholders, but this also creates a barrier to entry; it makes it harder to see if the event is suitable to attend. I have added a note about potential ways to address this in the future improvements section on the readme.
 
 ## Bugs
 - **Create-Event Form: The maximum_attendees value has a min value of 0, despite being explicitely set to min value of 1.**
