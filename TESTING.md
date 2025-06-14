@@ -244,25 +244,25 @@ Browser - Basic Functionality | Website was opened with Microsoft Edge, Google C
 ## Code Validation
 
 ### HTML
-HTML Validation was carried out by going to the deployed site on heroku, right clicking > view page source, and pasting the output into the [W3C Markup Validator](https://validator.w3.org/#validate_by_input)
+HTML Validation was carried out by going to the deployed site on heroku, right clicking > view page source, and pasting the output into the [W3C Markup Validator.](https://validator.w3.org/#validate_by_input)
 #### Index Page - Anonymous
-[W3C HTML Validation - Index Page - Anonymous](/documentation/testing-images/html-index-anon.png)
+![W3C HTML Validation - Index Page - Anonymous](/documentation/testing-images/html-index-anon.png)
 #### Index Page - Logged In
-[W3C HTML Validation - Index Page - Logged In](/documentation/testing-images/html-index-auth.png)
+![W3C HTML Validation - Index Page - Logged In](/documentation/testing-images/html-index-auth.png)
 #### Sign Up Page
 aria-describedby is created by the custom template for the form fields from allauth; not able to fix at present due to time constraints. 
-[W3C HTML Validation - Sign Up Page](/documentation/testing-images/html-signup.png)
+![W3C HTML Validation - Sign Up Page](/documentation/testing-images/html-signup.png)
 #### Log In Page
 aria-describedby is created by the custom template for the form fields from allauth; not able to fix at present due to time constraints. 
-[W3C HTML Validation - Log In Page](/documentation/testing-images/html-login.png)
+![W3C HTML Validation - Log In Page](/documentation/testing-images/html-login.png)
 #### Contact Us Page
-[W3C HTML Validation - Contact Us Page](/documentation/testing-images/html-contact.png)
+![W3C HTML Validation - Contact Us Page](/documentation/testing-images/html-contact.png)
 #### My Events Page
-[W3C HTML Validation - My Events Page](/documentation/testing-images/html-myevents.png)
+![W3C HTML Validation - My Events Page](/documentation/testing-images/html-myevents.png)
 #### Book Events (All Events Page)
-[W3C HTML Validation - Book Events](/documentation/testing-images/html-allevents.png)
+![W3C HTML Validation - Book Events](/documentation/testing-images/html-allevents.png)
 #### Search Events Page
-[W3C HTML Validation - Search Events Page](/documentation/testing-images/html-searchevents.png)
+![W3C HTML Validation - Search Events Page](/documentation/testing-images/html-searchevents.png)
 #### Create Event
 textarea attribute, style, cols, maxlength etc. affected by summernote - not able to fix at present due to time constraints.
 [W3C HTML Validation - Create Event Part 1](/documentation/testing-images/html-createvent1.png)
