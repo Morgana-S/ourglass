@@ -5,8 +5,9 @@ The project contains two apps, the events app and the contact app. These apps ar
 
 Automated testing was carried out using the in-built django testing library, which is based on unittest. While testing, I used an sqlite database to create mock data for the tests. This allowed me to focus on the behaviour of the forms and views rather than worrying about creating or using junk data in the PostgreSQL database.
 
-Fortunately, the testing process revealed a few bugs and many instances of poorly-planned
-views, which have since been altered and refactored. The history of these refactors is available in the git commits, but I have also included these in the bugs section below.
+Fortunately, the testing process revealed a few bugs and many instances of poorly-planned views, which have since been altered and refactored. The history of these refactors is available in the git commits, but I have also included these in the bugs section below.
+
+Unfortunately, I was unable to implement testing of my models and javascript testing with JEST, but due to the project containing minimal custom javascript, I considered JEST testing unnecessary.
 
 ### Events App Automated Testing
 There is a warning in the below tests that an unordered list may result in inconsistent order
@@ -289,7 +290,7 @@ CSS Validation was done through the [W3C CSS Validator](https://jigsaw.w3.org/cs
 ![CSS Validation](/documentation/testing-images/css-validation.png)
 
 ### JavaScript
-Custom JS was placed into [JSHint](https://jshint.com/) for validation.
+Custom JS was placed into [JSHint](https://jshint.com/) for validation. JSHint highlights two variables which are undefined, but these are flatpickr and bootstrap activators and are utilised in the custom scripts imported by those libraries.
 ![JSHint Screenshot](/documentation/testing-images/jslint.png)
 
 ## Lighthouse Reports
