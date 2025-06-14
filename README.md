@@ -233,6 +233,8 @@ For details of automated and manual tests, as well as code validation, please se
 
 - Initial user stories did not include delete functionality for Events, Bookings, or Reviews. This was added in later.
 
+- Initially, alerts were their own section that appeared above content; however, this pushed the content down. I made the decision to create alerts to be fixed on the screen to ensure that users of the site see them and can close them when appropriate. The alerts block navbar functionality, so users will have to engage with them before continuing to use the site.
+
 ## Potential Future Improvements
 
 - Google Maps, or similar Map API implementation on the event page to show users better details on where the events are.
